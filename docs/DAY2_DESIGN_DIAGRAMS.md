@@ -52,7 +52,7 @@ Shows the main classes in the system, their attributes, and relationships.
 +----------------+
        |
        | contains *
-       v
+       |
    +-----------+
    | OrderItem |
    |-----------|
@@ -64,7 +64,7 @@ Shows the main classes in the system, their attributes, and relationships.
    | - quantity |
    +-----------+
 
-
+```
 ---
 
 ## 2. Use Case Diagram
