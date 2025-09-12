@@ -25,12 +25,13 @@ Each day focuses on one deliverable: requirements, design, implementation, testi
   - [Requirement Specification Document](docs/DAY1_REQUIREMENT_SPEC.md)  
   - Defines functional and non-functional requirements, user stories, and acceptance criteria.  
 
-- **Day 2 — OOAD & Design** 🚧 (in progress)  
+- **Day 2 — OOAD & Design** ✅  
   - [Design Diagrams](docs/DAY2_DESIGN_DIAGRAMS.md)  
   - Includes Class, Use Case, and ER diagrams.  
 
-- **Day 3 — Environment Setup**  
-  - Java 17 & MySQL installation, project skeleton, initial classes.  
+- **Day 3 — Environment Setup** ✅
+  - [Environment Setup](docs/DAY3_ENV_SETUP.md)
+  - Project runs with Hello Bookstore + Book & User classes. 
 
 - **Day 4 — Implement Book Search**  
   - `BookService` with CRUD methods, SQL queries, and search functionality.  
