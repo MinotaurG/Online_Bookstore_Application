@@ -36,6 +36,15 @@
     </dependency>
 
 
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>5.9.3</version>
+      <scope>test</scope>
+    </dependency>
+
+
+
   </dependencies>
 
   <build>
@@ -44,12 +53,31 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
         <version>3.1.0</version>
+        <executions>
+          <!---Default run (Main class) -->
+          <execution>
+            <id>run-main</id>
+            <goals>
+              <goal>java</goal>
+            </goals>
         <configuration>
           <mainClass>com.bookstore.Main</mainClass>
         </configuration>
+          </execution>
+
+          <!-- Demo run (CartDemo class) -->
+          <execution>
+            <id>run-cart-demo</id>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <configuration>
+              <mainClass>com.bookstore.demo.CartDemo</mainClass>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
-
 
 </project>
