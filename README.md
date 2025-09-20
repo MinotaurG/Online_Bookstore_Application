@@ -39,7 +39,7 @@ Each day focuses on one deliverable: requirements, design, implementation, testi
 
 
 - **Day 3 — Environment Setup** ✅  
-  - [Environment Setup](docs/DAY3_ENV_SETUP.md)  
+  - [Environment Setup](docs/DAY3_ENV_SETUP.MD)  
   - Project runs with `Hello Bookstore` message + `Book` & `User` classes.  
 
 
