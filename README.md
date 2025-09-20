@@ -36,7 +36,7 @@ Each day focuses on one deliverable: requirements, design, implementation, testi
   - [Cart & Checkout](docs/DAY5_CART_CHECKOUT.md)  
 
 - **Day 6 — DynamoDB Integration** ✅  
-  - [Recommended Books](docs/DAY6_DYNAMODB_RECOMMENDATIONS.md)  
+  - [Recommended Books](docs/DAY6_BOOK_RECOMMENDATIONS.md)  
   - Created `RecommendationService` that fetches top 5 recommended books from a DynamoDB table `RecommendedBooks`.  
   - Added `RecommendationDemo` to showcase fetching and displaying recommendations for a user.  
   - Unit test (`RecommendationServiceTest`) validates DynamoDB query logic.  
