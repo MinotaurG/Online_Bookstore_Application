@@ -19,7 +19,7 @@ public class CartDemo {
                     "Programming", new BigDecimal("42.00"), 5);
             bookService.saveBook(b1);
             bookService.saveBook(b2);
-            System.out.println("📚 Seeded demo books into DynamoDB Local.");
+            System.out.println("Seeded demo books into DynamoDB Local.");
         }
 
         // Retrieve books from DB

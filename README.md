@@ -6,48 +6,110 @@ Each day focuses on one deliverable: requirements, design, implementation, testi
 
 ---
 
+## ⚡ Quickstart (Full Demo in 3 Steps)
+
+### 1. Build the fat JAR
+```bash
+mvn clean package
+```
+### 2. Start DynamoDB Local (inMemory)
+
+Windows PowerShell
+```
+java "-Djava.library.path=.\DynamoDBLocal_lib" -jar .\DynamoDBLocal.jar -inMemory -port 8000
+```
+WSL / Linux
+```
+java -Djava.library.path=./DynamoDBLocal_lib -jar ./DynamoDBLocal.jar -inMemory -port 8000 &
+```
+
+Keep this running. DynamoDB resets every time you restart (fresh state each demo).
+
+### 3. Run the full end-to-end demo
+```
+java -jar target/online-bookstore-0.0.1-SNAPSHOT-all.jar full
+```
+Expected: books are seeded → cart built → checkout success → order printed.
+
+
+---
+
 ## 🚀 Project Overview
 
-- **Core idea**: An online bookstore where users can search for books, view details, add them to a cart, and checkout.  
-- **Tech Stack**:  
-  - Java 17  
-  - Maven  
-  - DynamoDB Local (NoSQL database for books and search)  
-  - Jenkins (for CI/CD in later stages)  
-- **Target Environment**: Local development (Windows + PowerShell) and Linux VM  
+- **Core idea**: An online bookstore where users can search for books, view details, add them to a cart, and checkout.
+
+- **Tech Stack**:
+
+- Java 17
+
+- Maven
+
+- DynamoDB Local (NoSQL database, inMemory mode)
+
+- Jenkins (for CI/CD pipeline)
+
+
+- **Target Environment**: Local development (Windows + PowerShell) and Linux VM (WSL used for deployment simulation).
+
+
 
 ---
 
 ## 📅 Daily Deliverables
 
-- **Day 1 — Requirement Gathering** ✅  
+- **Day 1 — Requirement Gathering** ✅
+
   - [Requirement Specification Document](docs/DAY1_REQUIREMENT_SPEC.md)  
 
-- **Day 2 — OOAD & Design** ✅  
+
+- **Day 2 — OOAD & Design** ✅
+
   - [Design Diagrams](docs/DAY2_DESIGN_DIAGRAMS.md)  
 
-- **Day 3 — Environment Setup** ✅  
-  - [Environment Setup](docs/DAY3_ENV_SETUP.MD)  
 
-- **Day 4 — Implement Book Search** ✅  
+- **Day 3 — Environment Setup** ✅
+
+  - [Environment Setup](docs/DAY3_ENV_SETUP.MD)
+
+
+- **Day 4 — Implement Book Search** ✅
+
   - [Book Search with DynamoDB Local](docs/DAY4_BOOK_SEARCH.md)  
 
-- **Day 5 — Cart & Checkout** ✅  
-  - [Cart & Checkout](docs/DAY5_CART_CHECKOUT.md)  
 
-- **Day 6 — DynamoDB Integration** ✅  
-  - [Recommended Books](docs/DAY6_BOOK_RECOMMENDATIONS.md)  
-  - Created `RecommendationService` that fetches top 5 recommended books from a DynamoDB table `RecommendedBooks`.  
-  - Added `RecommendationDemo` to showcase fetching and displaying recommendations for a user.  
-  - Unit test (`RecommendationServiceTest`) validates DynamoDB query logic.  
+- **Day 5 — Cart & Checkout** ✅
+  - [Cart & Checkout](docs/DAY5_CART_CHECKOUT.md)
+
+- **Day 6 — DynamoDB Integration** ✅
+
+  - [Recommended Books](docs/DAY6_BOOK_RECOMMENDATIONS.md)
+
+- **Day 7 — Browsing History** ✅
+
+  - [Browsing History](docs/DAY7_BROWSING_HISTORY.md)
+
+
+- **Day 8 — Testing & Quality** ✅
+
+  - [Tests & Coverage](docs/DAY8_TESTS.md)
+
+
+- **Day 9 — CI/CD Pipeline** ✅
+  - [CI_CD with Jenkins](docs/DAY9_CI_CD.md)
+
+- **Day 10 — Final Deployment & Report** ✅
+
+  - [Final Project Report](docs/PROJECT_REPORT.md)
+
+
 
 *(See the full 10-day plan in [Online Bookstore Application.pdf](Online%20Bookstore%20Application.pdf)).*
 
+
 ---
 
-## 📂 Repository Structure
+📂 Repository Structure
 
-```text
 .
 ├── README.md                        
 ├── Online Bookstore Application.pdf 
@@ -57,7 +119,15 @@ Each day focuses on one deliverable: requirements, design, implementation, testi
 │   ├── DAY3_ENV_SETUP.md            
 │   ├── DAY4_BOOK_SEARCH.md          
 │   ├── DAY5_CART_CHECKOUT.md        
-│   └── DAY6_DYNAMODB_RECOMMENDATIONS.md 
+│   ├── DAY6_DYNAMODB_RECOMMENDATIONS.md
+│   ├── DAY7_BROWSING_HISTORY.md
+│   ├── DAY8_TESTS.md
+│   ├── DAY9_CI_CD.md
+│   └── PROJECT_REPORT.md            # Day 10 final deliverable
+├── Jenkinsfile                      
+├── scripts/                         
+│   ├── smoke-test.sh
+│   └── rollback.sh
 ├── src/                             
 │   └── main/java/com/bookstore/    
 │       ├── Book.java
@@ -70,85 +140,75 @@ Each day focuses on one deliverable: requirements, design, implementation, testi
 │       ├── OrderRepository.java
 │       ├── InMemoryOrderRepository.java
 │       ├── OrderIdGenerator.java
-│       ├── RecommendationService.java       # Day 6
+│       ├── RecommendationService.java       
+│       ├── BrowsingHistory.java             
+│       ├── DemoLauncher.java                
+│       ├── FullAppDemo.java                 
 │       ├── Main.java                        
 │       └── demo/
-│           ├── CartDemo.java                # Day 5 demo
-│           └── RecommendationDemo.java      # Day 6 demo
+│           ├── CartDemo.java                
+│           ├── RecommendationsDemo.java     
+│           └── BrowsingHistoryDemo.java     
 └── src/test/java/com/bookstore/
     ├── CartCheckoutTest.java                
-    └── RecommendationServiceTest.java       # Day 6 test
+    ├── RecommendationServiceTest.java       
+    ├── BrowsingHistoryTest.java             
+    ├── BookServiceTest.java
+    └── CheckoutServiceTest.java
 
-```
+
 ---
 
-## ▶️ How to Run
+## ▶️ How to Run (Detailed)
 
-1. **Start DynamoDB Local**
-```powershell
-   java "-Djava.library.path=.\DynamoDBLocal_lib" -jar .\DynamoDBLocal.jar -sharedDb -port 8000
+**Build**
 ```
-Keep this window open while running the app.
+mvn clean package
+```
+**Start DynamoDB Local (inMemory)**
 
-2. **Compile the project**
-```powershell
-   mvn clean compile
-```
-3. **Run Book Search Demo** (Day 4)
-```powershell
-   mvn "-Dexec.mainClass=com.bookstore.Main" exec:java
-```
-**Expected Output** (Day 4):
-```text
-All books:
-Clean Code by Robert C. Martin (Programming) price=35.5 stock=10
-Design Patterns by Erich Gamma, et al. (Programming) price=42 stock=5
+PowerShell:
 
-Exact query by title (GSI):
-Clean Code by Robert C. Martin (Programming) price=35.5 stock=10
+```
+java "-Djava.library.path=.\DynamoDBLocal_lib" -jar .\DynamoDBLocal.jar -inMemory -port 8000
+```
+**WSL / Linux:**
 
-Contains search 'Design':
-Design Patterns by Erich Gamma, et al. (Programming) price=42 stock=5
 ```
-4. **Run Cart & Checkout Demo** (Day 5)
-```powershell
-   mvn "-Dexec.mainClass=com.bookstore.demo.CartDemo" exec:java
+java -Djava.library.path=./DynamoDBLocal_lib -jar ./DynamoDBLocal.jar -inMemory -port 8000 &
 ```
-**Expected Output** (Day 5):
-```text
-Cart contents:
-Clean Code x1 @ 35.50 each -> 35.50
-Design Patterns x2 @ 42.00 each -> 84.00
-Cart total: 119.50
+### Run Demos
 
-Checkout complete. Order details:
-Order 123e4567-... for demoUser at 2025-09-15T12:34:56Z
- - Clean Code x1 @ 35.50 each -> 35.50
- - Design Patterns x2 @ 42.00 each -> 84.00
-Total: 119.50
+**Book Search demo (Day 4)**
+```
+java -jar target/online-bookstore-0.0.1-SNAPSHOT-all.jar search
+```
+**Cart & Checkout demo (Day 5)**
+```
+java -jar target/online-bookstore-0.0.1-SNAPSHOT-all.jar cart
+```
+**Recommendations demo (Day 6)**
+```
+java -jar target/online-bookstore-0.0.1-SNAPSHOT-all.jar recs
+```
+**Browsing History demo (Day 7)**
+```
+java -jar target/online-bookstore-0.0.1-SNAPSHOT-all.jar history
+```
+**Full end-to-end demo (Day 10)**
+```
+java -jar target/online-bookstore-0.0.1-SNAPSHOT-all.jar full
+```
 
-Orders in repository: 1
-```
-⚠️ **Note**: If you run the demo again without restarting DynamoDB Local, you may see:
-```text
-   java.lang.IllegalStateException: Not enough stock for: Design Patterns
-```
-This is intentional — it demonstrates stock consistency (no overselling). Restart DynamoDB Local with -inMemory for a fresh run.
+---
 
-5. **Run Recommendations Demo** (Day 6)
-```powershell
-   mvn "-Dexec.mainClass=com.bookstore.demo.RecommendationsDemo" exec:java
-```
-**Expected Output** (Day 6):
-```text
-Seeded recommendations for demoUser
+## ⚠️ Notes
 
-Top 5 recommendations for demoUser:
-1. Effective Java (bookId=b-100) [classic]
-2. The Pragmatic Programmer (bookId=b-200) [best practice]
-3. Clean Architecture (bookId=b-300) [design]
-4. Refactoring (bookId=b-400) [patterns]
-5. Head First Design Patterns (bookId=b-500) [easy learning]
-```
+DynamoDB is always fresh because of -inMemory. Every restart gives a clean DB.
+
+Stock decrements after checkout — if you re-run Cart demo without restart, you may see “Not enough stock”. Restart DynamoDB Local for a fresh run.
+
+DemoLauncher simplifies running different demos (search, cart, recs, history, full).
+
 
 ---
