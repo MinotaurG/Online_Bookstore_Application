@@ -1,7 +1,7 @@
 # Day 8 — Tests & Quality
 
 **Deliverable:** Add unit tests, integration tests, and quality checks.  
-**Date:** (replace with today’s date)
+**Date:** 10/2/2025
 
 ---
 

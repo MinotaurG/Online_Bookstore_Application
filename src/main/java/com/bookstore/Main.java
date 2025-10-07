@@ -10,13 +10,16 @@ public class Main {
 
         // Only seed books if the table is empty
         if (service.listAllBooks().isEmpty()) {
-            Book b1 = new Book(UUID.randomUUID().toString(), "Clean Code", "Robert C. Martin", "Programming", new BigDecimal("35.50"), 10);
-            Book b2 = new Book(UUID.randomUUID().toString(), "Design Patterns", "Erich Gamma, et al.", "Programming", new BigDecimal("42.00"), 5);
+            Book b1 = new Book(UUID.randomUUID().toString(), "Clean Code", "Robert C. Martin",
+                    "Programming", new BigDecimal("35.50"), 10);
+            Book b2 = new Book(UUID.randomUUID().toString(), "Design Patterns", "Erich Gamma, et al.",
+                    "Programming", new BigDecimal("42.00"), 5);
 
-            service.saveBook(b1);
-            service.saveBook(b2);
-            System.out.println("Seeded sample books.");
+            service.saveOrUpdateBookByTitle(b1);
+            service.saveOrUpdateBookByTitle(b2);
+            System.out.println("Seeded sample books (idempotent).");
         }
+
 
         // brief pause (table creation/consistency)
         Thread.sleep(500);

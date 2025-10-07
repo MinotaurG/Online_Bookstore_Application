@@ -4,13 +4,13 @@ import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.enhanced.dynamodb.*;
 import software.amazon.awssdk.enhanced.dynamodb.model.*;
-import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.*;
 import software.amazon.awssdk.services.dynamodb.model.*;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -19,6 +19,7 @@ import java.util.stream.StreamSupport;
  * - Connects to local DynamoDB at http://localhost:8000
  * - Creates a table "Books" if missing, with a GSI "TitleIndex" on attribute "title"
  * - Provides CRUD and simple search utilities
+ * - Includes idempotent save/update to avoid duplicate books
  */
 public class BookService {
 
@@ -45,10 +46,8 @@ public class BookService {
 
     private void createTableIfNotExists() {
         try {
-            // If describeTable succeeds, table exists
             dynamoDbClient.describeTable(DescribeTableRequest.builder().tableName(tableName).build());
         } catch (ResourceNotFoundException e) {
-            // Build CreateTableRequest with a simple GSI on "title"
             CreateTableRequest createTableRequest = CreateTableRequest.builder()
                     .tableName(tableName)
                     .attributeDefinitions(
@@ -68,35 +67,55 @@ public class BookService {
                     .build();
 
             dynamoDbClient.createTable(createTableRequest);
-
-            // Wait for table to exist
-            dynamoDbClient.waiter().waitUntilTableExists(DescribeTableRequest.builder().tableName(tableName).build());
+            dynamoDbClient.waiter().waitUntilTableExists(
+                    DescribeTableRequest.builder().tableName(tableName).build()
+            );
         }
     }
 
-    // Put / Save a book
+    // -------------------------------
+    // CRUD OPERATIONS
+    // -------------------------------
+
+    /** Inserts or updates a book (by title) to prevent duplicates. */
+    public void saveOrUpdateBookByTitle(Book book) {
+        Optional<Book> existing = findOneByTitleIgnoreCase(book.getTitle());
+
+        if (existing.isPresent()) {
+            Book old = existing.get();
+            old.setPrice(book.getPrice());
+            old.setStockQuantity(book.getStockQuantity());
+            bookTable.updateItem(old);
+            System.out.println("Updated existing book: " + old.getTitle());
+        } else {
+            bookTable.putItem(book);
+            System.out.println("Inserted new book: " + book.getTitle());
+        }
+    }
+
+    /** Plain insert (used for backwards compatibility). */
     public void saveBook(Book book) {
         bookTable.putItem(book);
     }
 
-    // Get by id
+    /** Get by ID. */
     public Book getBookById(String id) {
         return bookTable.getItem(r -> r.key(k -> k.partitionValue(id)));
     }
 
-    // Delete by id
+    /** Delete by ID. */
     public void deleteBook(String id) {
         bookTable.deleteItem(Key.builder().partitionValue(id).build());
     }
 
-    // List all books (scan) — properly flatten pages -> items
+    /** List all books (scan). */
     public List<Book> listAllBooks() {
         return StreamSupport.stream(bookTable.scan().spliterator(), false)
                 .flatMap(page -> page.items().stream())
                 .collect(Collectors.toList());
     }
 
-    // Query by exact title using the TitleIndex GSI (flatten pages -> items)
+    /** Query by exact title (case-sensitive, via GSI). */
     public List<Book> findByTitle(String title) {
         DynamoDbIndex<Book> titleIndex = bookTable.index("TitleIndex");
         QueryConditional qc = QueryConditional.keyEqualTo(Key.builder().partitionValue(title).build());
@@ -106,7 +125,7 @@ public class BookService {
                 .collect(Collectors.toList());
     }
 
-    // Simple contains-search (scan + in-memory filter) — useful for demo/small datasets
+    /** Search by partial match (title or author). */
     public List<Book> searchByTitleOrAuthorContains(String text) {
         String lower = text == null ? "" : text.toLowerCase();
         return StreamSupport.stream(bookTable.scan().spliterator(), false)
@@ -116,7 +135,21 @@ public class BookService {
                 .collect(Collectors.toList());
     }
 
-    // Close client
+    // -------------------------------
+    // UTILITIES
+    // -------------------------------
+
+    /** Find one book by title, ignoring case. */
+    public Optional<Book> findOneByTitleIgnoreCase(String title) {
+        if (title == null || title.isEmpty()) return Optional.empty();
+
+        List<Book> all = listAllBooks();
+        return all.stream()
+                .filter(b -> b.getTitle() != null && b.getTitle().equalsIgnoreCase(title))
+                .findFirst();
+    }
+
+    /** Close client resources. */
     public void close() {
         if (dynamoDbClient != null) {
             dynamoDbClient.close();
