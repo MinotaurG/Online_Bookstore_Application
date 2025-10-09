@@ -8,6 +8,7 @@ import com.bookstore.InMemoryOrderRepository;
 import com.bookstore.Order;
 
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -30,17 +31,19 @@ public class CartDemo {
 
             List<Book> books = bookService.listAllBooks();
 
-            // Defensive lookup helper: case-insensitive match by title
-            Book cleanCode = findByTitleInsensitive(books, "Clean Code")
+            // Prefer direct lookup to avoid reading possibly-duplicated scan results
+            Book cleanCode = bookService.findOneByTitleIgnoreCase("Clean Code")
                     .orElseGet(() -> {
-                        System.err.println("Warning: 'Clean Code' not found after seeding — proceeding with first available book as fallback.");
-                        return books.isEmpty() ? null : books.get(0);
+                        System.err.println("Warning: 'Clean Code' not found after seeding — fallback to first available.");
+                        List<Book> fallback = bookService.listAllBooks();
+                        return fallback.isEmpty() ? null : fallback.get(0);
                     });
 
-            Book designPatterns = findByTitleInsensitive(books, "Design Patterns")
+            Book designPatterns = bookService.findOneByTitleIgnoreCase("Design Patterns")
                     .orElseGet(() -> {
-                        System.err.println("Warning: 'Design Patterns' not found after seeding — proceeding with first available book as fallback.");
-                        return books.size() > 1 ? books.get(1) : (books.isEmpty() ? null : books.get(0));
+                        System.err.println("Warning: 'Design Patterns' not found after seeding — fallback to second available.");
+                        List<Book> fallback = bookService.listAllBooks();
+                        return fallback.size() > 1 ? fallback.get(1) : (fallback.isEmpty() ? null : fallback.get(0));
                     });
 
             if (cleanCode == null || designPatterns == null) {
@@ -85,12 +88,17 @@ public class CartDemo {
     }
 
     private static void seedIfMissing(BookService bookService, String title, String author, String genre, BigDecimal price, int stock) {
+        // If a book with the title exists (case-insensitive), skip
         if (bookService.findOneByTitleIgnoreCase(title).isEmpty()) {
-            Book b = new Book(UUID.randomUUID().toString(), title, author, genre, price, stock);
+            // deterministic id based on title + author
+            String id = UUID.nameUUIDFromBytes((title + "|" + author).getBytes(StandardCharsets.UTF_8)).toString();
+            Book b = new Book(id, title, author, genre, price, stock);
+            // plain save (will overwrite if id already present)
             bookService.saveOrUpdateBookByTitle(b);
-            System.out.println("Seeded: " + title);
+            System.out.println("Seeded: " + title + " (id=" + id + ")");
         } else {
             System.out.println("Seed skipped (exists): " + title);
         }
     }
+
 }

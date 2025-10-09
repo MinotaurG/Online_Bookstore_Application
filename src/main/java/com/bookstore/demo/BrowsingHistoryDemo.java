@@ -2,6 +2,7 @@ package com.bookstore.demo;
 
 import com.bookstore.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -19,10 +20,19 @@ public class BrowsingHistoryDemo {
 
         // seed books if none exist (idempotent pattern similar to other demos)
         if (bookService.listAllBooks().isEmpty()) {
-            // seed same as Day 4/5 demo — keep IDs predictable if you prefer
-            bookService.saveBook(new Book(java.util.UUID.randomUUID().toString(), "Clean Code", "Robert C. Martin", "Programming", new java.math.BigDecimal("35.50"), 10));
-            bookService.saveBook(new Book(java.util.UUID.randomUUID().toString(), "Design Patterns", "Erich Gamma, et al.", "Programming", new java.math.BigDecimal("42.00"), 5));
-            bookService.saveBook(new Book(java.util.UUID.randomUUID().toString(), "Effective Java", "Joshua Bloch", "Programming", new java.math.BigDecimal("45.00"), 8));
+            // Use deterministic ids (title + author) to avoid duplicates on reseed
+            String id1 = DeterministicId.forBook("Clean Code", "Robert C. Martin");
+            String id2 = DeterministicId.forBook("Design Patterns", "Erich Gamma, et al.");
+            String id3 = DeterministicId.forBook("Effective Java", "Joshua Bloch");
+
+            // Use upsert by title to ensure idempotent seeding (won't create duplicates)
+            bookService.saveOrUpdateBookByTitle(new Book(id1, "Clean Code", "Robert C. Martin", "Programming",
+                    new BigDecimal("35.50"), 10));
+            bookService.saveOrUpdateBookByTitle(new Book(id2, "Design Patterns", "Erich Gamma, et al.", "Programming",
+                    new BigDecimal("42.00"), 5));
+            bookService.saveOrUpdateBookByTitle(new Book(id3, "Effective Java", "Joshua Bloch", "Programming",
+                    new BigDecimal("45.00"), 8));
+
             System.out.println("Seeded demo books for browsing demo.");
         }
 
