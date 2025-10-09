@@ -1,0 +1,69 @@
+@startuml DynamoDB ER - Online Bookstore
+
+title Online Bookstore — DynamoDB Model (NoSQL view)
+
+skinparam linetype ortho
+hide circle
+
+' Tables as boxes with key annotations
+entity "Books (table)" as Books {
+  * id : S <<PK>>
+  --
+  title : S
+  author : S
+  genre : S
+  price : N
+  stockQuantity : N
+  -- indexes
+  [GSI: TitleIndex (partition=title)]
+}
+
+entity "Orders (table)" as Orders {
+  * id : S <<PK>>
+  --
+  userId : S
+  total : N
+  status : S
+  createdAt : S
+  items : L  -- list of maps [{bookId,title,price,qty}]
+}
+
+entity "RecommendedBooks (table)" as Recs {
+  * userId : S <<PK>>
+  --
+  bookId : S
+  rank : N
+  reason : S
+  ' Possible SK if you want ordering: sortKey = rank
+}
+
+entity "BrowsingHistory (table)" as History {
+  * userId : S <<PK>>
+  --
+  timestamp : S  <-- could be used as sort key if implemented
+  recentBooks : L  -- list of bookIds (or map with timestamps)
+}
+
+' Notes to clarify design decisions
+note bottom of Books
+  - Partition Key: id (string UUID)
+  - TitleIndex: GSI where partition = title (for exact title queries)
+  - Contains stockQuantity for availability checks.
+end note
+
+note bottom of Orders
+  - Stores items as a list of maps to keep order snapshot (immutable)
+  - No strong relational FK — references by bookId only
+end note
+
+note bottom of Recs
+  - Keyed by userId to quickly fetch recommendations for a user
+end note
+
+' Illustrative relationships (not enforced by DynamoDB)
+Books ||--o{ Orders : "referenced in items (by bookId)"
+Books ||--o{ Recs : "recommended"
+Users ||--o{ Orders : "userId stored in Orders (referential)"
+Users ||--o{ History : "browsing entries per user"
+
+@enduml

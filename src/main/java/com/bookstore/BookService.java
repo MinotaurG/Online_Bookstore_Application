@@ -94,8 +94,7 @@ public class BookService {
     }
 
     /** Plain insert (used for backwards compatibility). */
-    public void saveBook(Book book) {
-        bookTable.putItem(book);
+    public void saveBook(Book book) { bookTable.putItem(book);
     }
 
     /** Get by ID. */

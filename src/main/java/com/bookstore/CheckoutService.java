@@ -61,7 +61,7 @@ public class CheckoutService {
                     int newStock = b.getStockQuantity() - item.getQuantity();
                     if (newStock < 0) newStock = 0;
                     b.setStockQuantity(newStock);
-                    bookService.saveBook(b); // overwrite in DynamoDB; BookService.saveBook exists
+                    bookService.saveOrUpdateBookByTitle(b); // overwrite in DynamoDB; BookService.saveBook exists
                 }
             }
         }

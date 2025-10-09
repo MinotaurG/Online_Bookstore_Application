@@ -111,50 +111,41 @@ Expected: books are seeded → cart built → checkout success → order printed
 📂 Repository Structure
 
 .
-├── README.md                        
-├── Online Bookstore Application.pdf 
-├── docs/                            
-│   ├── DAY1_REQUIREMENT_SPEC.md     
-│   ├── DAY2_DESIGN_DIAGRAMS.md      
-│   ├── DAY3_ENV_SETUP.md            
-│   ├── DAY4_BOOK_SEARCH.md          
-│   ├── DAY5_CART_CHECKOUT.md        
+├── README.md
+├── Jenkinsfile
+├── Online Bookstore Application.pdf        # Training handbook
+├── docs/                                   # Daily deliverables
+│   ├── DAY1_REQUIREMENT_SPEC.md
+│   ├── DAY2_DESIGN_DIAGRAMS.md
+│   ├── DAY3_ENV_SETUP.md
+│   ├── DAY4_BOOK_SEARCH.md
+│   ├── DAY5_CART_CHECKOUT.md
 │   ├── DAY6_DYNAMODB_RECOMMENDATIONS.md
 │   ├── DAY7_BROWSING_HISTORY.md
-│   ├── DAY8_TESTS.md
-│   ├── DAY9_CI_CD.md
-│   └── PROJECT_REPORT.md            # Day 10 final deliverable
-├── Jenkinsfile                      
-├── scripts/                         
-│   ├── smoke-test.sh
-│   └── rollback.sh
-├── src/                             
-│   └── main/java/com/bookstore/    
+│   ├── DAY8_TESTING.md
+│   ├── DAY9_CICD_SETUP.md
+│   └── DAY10_DEPLOYMENT.md
+│   └── PROJECT_REPORT.md
+├── src/
+│   └── main/java/com/bookstore/
 │       ├── Book.java
-│       ├── User.java
-│       ├── BookService.java
-│       ├── CheckoutService.java
+│       ├── BookService.java                # Uses DynamoDB Local (idempotent seeding)
 │       ├── Cart.java
 │       ├── CartItem.java
-│       ├── Order.java
-│       ├── OrderRepository.java
+│       ├── CheckoutService.java
 │       ├── InMemoryOrderRepository.java
+│       ├── Order.java
 │       ├── OrderIdGenerator.java
-│       ├── RecommendationService.java       
-│       ├── BrowsingHistory.java             
-│       ├── DemoLauncher.java                
-│       ├── FullAppDemo.java                 
-│       ├── Main.java                        
+│       ├── RecommendationService.java
+│       ├── User.java
+│       ├── Main.java                       # Book Search Demo
 │       └── demo/
-│           ├── CartDemo.java                
-│           ├── RecommendationsDemo.java     
-│           └── BrowsingHistoryDemo.java     
-└── src/test/java/com/bookstore/
-    ├── CartCheckoutTest.java                
-    ├── RecommendationServiceTest.java       
-    ├── BrowsingHistoryTest.java             
-    ├── BookServiceTest.java
-    └── CheckoutServiceTest.java
+│           ├── CartDemo.java               # Cart & Checkout Demo
+│           ├── RecommendationsDemo.java    # Book Recommendation Demo
+│           ├── BrowsingHistoryDemo.java    # Browsing History Demo
+│           └── DemoLauncher.java           # Unified entrypoint (full demo)
+└── pom.xml
+
 
 
 ---

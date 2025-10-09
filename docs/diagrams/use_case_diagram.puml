@@ -1,0 +1,39 @@
+@startuml Use Case Diagram - Online Bookstore
+
+title Online Bookstore — Use Case Diagram
+
+actor User
+actor Admin
+
+rectangle "Customer Use Cases" {
+  usecase "Search Book" as UC_Search
+  usecase "View Book Details" as UC_View
+  usecase "Add to Cart" as UC_Add
+  usecase "View Cart" as UC_ViewCart
+  usecase "Checkout / Pay" as UC_Checkout
+  usecase "View Order History" as UC_History
+}
+
+rectangle "Admin Use Cases" {
+  usecase "Add Book" as UC_AddBook
+  usecase "Update Book / Stock" as UC_UpdateBook
+  usecase "Remove Book" as UC_RemoveBook
+}
+
+' Relationships
+User --> UC_Search
+User --> UC_View
+User --> UC_Add
+User --> UC_ViewCart
+User --> UC_Checkout
+User --> UC_History
+
+Admin --> UC_AddBook
+Admin --> UC_UpdateBook
+Admin --> UC_RemoveBook
+
+' Example include/extend (optional)
+UC_Add --> UC_View : <<include>>
+UC_Checkout .> UC_ViewCart : <<include>>
+
+@enduml

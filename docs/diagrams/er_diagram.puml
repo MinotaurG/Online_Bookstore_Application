@@ -1,0 +1,71 @@
+@startuml ER Diagram - Online Bookstore
+
+title Online Bookstore — ER Diagram (relational view)
+
+hide circle
+skinparam linetype ortho
+
+entity "users" as users {
+  * id : UUID <<PK>>
+  --
+  username : varchar
+  email : varchar
+  password_hash : varchar
+  created_at : timestamp
+}
+
+entity "books" as books {
+  * id : UUID <<PK>>
+  --
+  title : varchar
+  author : varchar
+  genre : varchar
+  isbn : varchar
+  price : decimal
+  stock_quantity : int
+  description : text
+}
+
+entity "carts" as carts {
+  * id : UUID <<PK>>
+  --
+  user_id : UUID <<FK users.id>>
+  created_at : timestamp
+}
+
+entity "cart_items" as cart_items {
+  * id : UUID <<PK>>
+  --
+  cart_id : UUID <<FK carts.id>>
+  book_id : UUID <<FK books.id>>
+  quantity : int
+}
+
+entity "orders" as orders {
+  * id : UUID <<PK>>
+  --
+  user_id : UUID <<FK users.id>>
+  total : decimal
+  status : varchar
+  created_at : timestamp
+}
+
+entity "order_items" as order_items {
+  * id : UUID <<PK>>
+  --
+  order_id : UUID <<FK orders.id>>
+  book_id : UUID <<FK books.id>>  ' optional snapshot link
+  title_snapshot : varchar
+  price_snapshot : decimal
+  quantity : int
+}
+
+' Relationships (crow's foot style simulated)
+users ||--o{ carts : "1 to many"
+carts ||--o{ cart_items : "1 to many"
+books ||--o{ cart_items : "1 to many"
+users ||--o{ orders : "1 to many"
+orders ||--o{ order_items : "1 to many"
+books ||--o{ order_items : "1 to many"
+
+@enduml

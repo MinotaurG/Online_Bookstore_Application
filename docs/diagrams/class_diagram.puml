@@ -1,0 +1,73 @@
+@startuml Class Diagram - Online Bookstore
+
+' Title
+title Online Bookstore — Class Diagram
+
+' Skin
+skinparam classAttributeIconSize 0
+
+' Classes
+class User {
+  - String id
+  - String username
+  - String email
+  + getId()
+  + getUsername()
+}
+
+class Cart {
+  - String id
+  - String userId
+  - Instant createdAt
+  + addBook(Book, int)
+  + removeBook(Book)
+  + calculateTotal(): BigDecimal
+}
+
+class CartItem {
+  - String id
+  - String cartId
+  - String bookId
+  - int quantity
+  + getSubtotal(): BigDecimal
+}
+
+class Book {
+  - String id
+  - String title
+  - String author
+  - String genre
+  - BigDecimal price
+  - Integer stockQuantity
+  + getPrice()
+  + getTitle()
+}
+
+class Order {
+  - String id
+  - String userId
+  - BigDecimal total
+  - String status
+  - Instant createdAt
+  + getTotal()
+}
+
+class OrderItem {
+  - String id
+  - String orderId
+  - String bookId
+  - String title_snapshot
+  - BigDecimal price_snapshot
+  - int quantity
+  + getLineTotal()
+}
+
+' Associations / multiplicities
+User "1" -- "0..1" Cart : owns >
+Cart "1" o-- "0..*" CartItem : contains >
+CartItem "*" --> "1" Book : references >
+User "1" -- "0..*" Order : places >
+Order "1" o-- "1..*" OrderItem : contains >
+OrderItem "*" --> "1" Book : snapshot-of >
+
+@enduml

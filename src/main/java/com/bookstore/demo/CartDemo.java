@@ -85,9 +85,7 @@ public class CartDemo {
     }
 
     private static void seedIfMissing(BookService bookService, String title, String author, String genre, BigDecimal price, int stock) {
-        List<Book> current = bookService.listAllBooks();
-        boolean exists = current.stream().anyMatch(b -> b.getTitle() != null && b.getTitle().equalsIgnoreCase(title));
-        if (!exists) {
+        if (bookService.findOneByTitleIgnoreCase(title).isEmpty()) {
             Book b = new Book(UUID.randomUUID().toString(), title, author, genre, price, stock);
             bookService.saveOrUpdateBookByTitle(b);
             System.out.println("Seeded: " + title);

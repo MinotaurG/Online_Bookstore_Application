@@ -8,17 +8,16 @@ public class Main {
     public static void main(String[] args) throws InterruptedException {
         BookService service = new BookService();
 
-        // Only seed books if the table is empty
-        if (service.listAllBooks().isEmpty()) {
-            Book b1 = new Book(UUID.randomUUID().toString(), "Clean Code", "Robert C. Martin",
-                    "Programming", new BigDecimal("35.50"), 10);
-            Book b2 = new Book(UUID.randomUUID().toString(), "Design Patterns", "Erich Gamma, et al.",
-                    "Programming", new BigDecimal("42.00"), 5);
+        // Always attempt to upsert demo seeds (idempotent) — this will insert or update existing entry by title.
+        Book b1 = new Book(UUID.randomUUID().toString(), "Clean Code", "Robert C. Martin",
+                "Programming", new BigDecimal("35.50"), 10);
+        Book b2 = new Book(UUID.randomUUID().toString(), "Design Patterns", "Erich Gamma, et al.",
+                "Programming", new BigDecimal("42.00"), 5);
 
-            service.saveOrUpdateBookByTitle(b1);
-            service.saveOrUpdateBookByTitle(b2);
-            System.out.println("Seeded sample books (idempotent).");
-        }
+        service.saveOrUpdateBookByTitle(b1);
+        service.saveOrUpdateBookByTitle(b2);
+        System.out.println("Seeded sample books (idempotent).");
+
 
 
         // brief pause (table creation/consistency)
