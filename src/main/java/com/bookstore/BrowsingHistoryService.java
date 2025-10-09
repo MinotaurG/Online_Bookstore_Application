@@ -1,42 +1,34 @@
 package com.bookstore;
 
-import java.util.List;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * Manages browsing histories per user (in-memory).
- * Uses simple ConcurrentHashMap<userId, BrowsingHistory>.
- */
+@Service
 public class BrowsingHistoryService {
-    private final ConcurrentHashMap<String, BrowsingHistory> store = new ConcurrentHashMap<>();
-    private final int defaultCapacity;
 
-    public BrowsingHistoryService(int defaultCapacity) {
-        this.defaultCapacity = defaultCapacity;
+    private final int capacity;
+    private final Map<String, Deque<Book>> histories = new ConcurrentHashMap<>();
+
+    // Spring will inject property browsing.history.capacity or fallback to 10
+    public BrowsingHistoryService(@Value("${browsing.history.capacity:10}") int capacity) {
+        this.capacity = capacity;
     }
 
-    private BrowsingHistory historyFor(String userId) {
-        return store.computeIfAbsent(userId, id -> new BrowsingHistory(defaultCapacity));
+    public void view(String user, Book book) {
+        histories.computeIfAbsent(user, k -> new ArrayDeque<>());
+
+        Deque<Book> dq = histories.get(user);
+
+        dq.removeIf(b -> b.getId().equals(book.getId()));
+        dq.addFirst(book);
+        while (dq.size() > capacity) dq.removeLast();
     }
 
-    public void view(String userId, Book book) {
-        historyFor(userId).view(book);
-    }
-
-    public List<Book> getRecent(String userId, int n) {
-        BrowsingHistory h = store.get(userId);
-        if (h == null) return java.util.Collections.emptyList();
-        return h.getRecent(n);
-    }
-
-    public List<Book> getRecent(String userId) {
-        BrowsingHistory h = store.get(userId);
-        if (h == null) return java.util.Collections.emptyList();
-        return h.getRecent();
-    }
-
-    public void clear(String userId) {
-        BrowsingHistory h = store.get(userId);
-        if (h != null) h.clear();
+    public List<Book> getRecent(String user) {
+        Deque<Book> dq = histories.getOrDefault(user, new ArrayDeque<>());
+        return new ArrayList<>(dq);
     }
 }

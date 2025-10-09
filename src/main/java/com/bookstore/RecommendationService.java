@@ -1,28 +1,29 @@
 package com.bookstore;
 
+
 import java.util.List;
+import java.util.Objects;
+
 
 public class RecommendationService {
-    private final RecommendationRepository repo;
+    private final RecommendationRepository repository;
 
-    public RecommendationService(RecommendationRepository repo) {
-        this.repo = repo;
+
+    public RecommendationService(RecommendationRepository repository) {
+        this.repository = Objects.requireNonNull(repository);
     }
 
-    public void seedIfEmpty(String userId, List<Recommendation> recs) {
-        List<Recommendation> existing = repo.getTopRecommendations(userId, 1);
-        if (existing.isEmpty()) {
-            repo.saveRecommendations(userId, recs);
-            System.out.println("Seeded recommendations for " + userId);
-        }
+
+    public List<Book> recommendForUser(String userId, int limit) {
+        return repository.findRecommendationsForUser(userId, limit);
     }
 
-    public List<Recommendation> getTop(String userId, int n) {
-        return repo.getTopRecommendations(userId, n);
+
+    // convenience if used by demos/tests
+    public List<Book> recommendForUser(String userId) {
+        return recommendForUser(userId, 5);
     }
 
-    public void delete(String userId) {
-        repo.deleteRecommendations(userId);
+    public void seedIfEmpty(String user, List<Recommendation> recs) {
     }
 }
-

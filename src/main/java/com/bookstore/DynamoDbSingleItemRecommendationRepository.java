@@ -73,6 +73,11 @@ public class DynamoDbSingleItemRecommendationRepository implements Recommendatio
         table.deleteItem(Key.builder().partitionValue(userId).build());
     }
 
+    @Override
+    public List<Book> findRecommendationsForUser(String userId, int limit) {
+        return List.of();
+    }
+
     public void close() {
         client.close();
     }
