@@ -13,6 +13,12 @@ import org.springframework.context.annotation.Configuration;
 public class ServiceConfig {
 
     @Bean
+    public UserRepository userRepository() {
+        return new InMemoryUserRepository();
+    }
+
+
+    @Bean
     public OrderRepository orderRepository() {
         return new InMemoryOrderRepository();
     }

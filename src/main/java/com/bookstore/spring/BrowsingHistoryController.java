@@ -1,27 +1,52 @@
 package com.bookstore.spring;
 
-import com.bookstore.BrowsingHistoryService;
 import com.bookstore.Book;
+import com.bookstore.BookService;
+import com.bookstore.BrowsingHistoryService;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/history")
 public class BrowsingHistoryController {
-    private final BrowsingHistoryService historyService;
 
-    public BrowsingHistoryController(BrowsingHistoryService historyService) {
+    private final BrowsingHistoryService historyService;
+    private final BookService bookService;
+
+    public BrowsingHistoryController(BrowsingHistoryService historyService,
+                                     BookService bookService) {
         this.historyService = historyService;
+        this.bookService = bookService;
     }
 
+    // accept only a bookId to avoid fragile JSON mapping issues
+    public static record ViewRequest(String bookId) {}
+
     @PostMapping("/view")
-    public void view(@RequestParam("user") String user, @RequestBody Book book) {
-        historyService.view(user, book);
+    public ResponseEntity<?> view(HttpSession session, @RequestBody ViewRequest req) {
+        String username = (String) session.getAttribute("username");
+        if (username == null || username.isBlank()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No user is logged in");
+        }
+        if (req == null || req.bookId() == null || req.bookId().isBlank()) {
+            return ResponseEntity.badRequest().body("Missing bookId");
+        }
+        Book b = bookService.getBookById(req.bookId());
+        if (b == null) {
+            return ResponseEntity.badRequest().body("Book not found: " + req.bookId());
+        }
+        historyService.view(username, b);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping
-    public List<Book> recent(@RequestParam("user") String user) {
-        return historyService.getRecent(user);
+    public ResponseEntity<?> recent(HttpSession session) {
+        String username = (String) session.getAttribute("username");
+        if (username == null || username.isBlank()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No user is logged in");
+        }
+        return ResponseEntity.ok(historyService.getRecent(username));
     }
 }
