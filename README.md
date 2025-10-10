@@ -62,8 +62,7 @@ The Online Bookstore Application is a Java-based web application that simulates 
 - Alternatively, the SDK's low-level client is used for certain queries and scans
 
 ### Testing
-- **JUnit** and **Mockito** for unit tests, ensuring individual components (services, controllers) work correctly
-- **Cucumber (BDD)** is used for high-level behavior testing; for example, a feature file defines scenarios for searching a book by title and verifying the results
+- **JUnit** and **Mockito** for unit tests, ensuring individual components (services, controllers) work correctly
 - Test coverage is measured with **JaCoCo** (about 54% of instructions covered in tests), including both unit and integration tests
 
 ### Build & Tools
@@ -232,12 +231,10 @@ java -jar DynamoDBLocal.jar -sharedDb
 
 **Recommendations**
 - After logging in, view "Recommended Books" section
-- Retrieves personalized book list from Recommendations table
-- Click on any recommended book to view details and add to cart
+- Retrieves personalized book list from Recommendations table
 
 **Recently Viewed Books**
-- Automatically tracks books you view
-- Access via "Recently Viewed" link (sidebar or navigation)
+- Automatically tracks books you view
 - Shows last few books you looked at
 - *Note: This list is maintained only in memory and resets when session ends*
 
