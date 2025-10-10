@@ -41,6 +41,19 @@ export const api = {
   searchBooks: (q) => fetch(`/api/books/search?q=${encodeURIComponent(q)}`).then(handle),
   getBook: (id) => fetch(`/api/books/${id}`).then(handle),
 
+  // DELETE BOOKS (refactored to use handle)
+  deleteBookById: (id) =>
+    fetch(`/api/books/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+      credentials: 'include'
+    }).then(handle),
+
+  deleteBookByTitle: (title) =>
+    fetch(`/api/books/by-title?title=${encodeURIComponent(title)}`, {
+      method: 'DELETE',
+      credentials: 'include'
+    }).then(handle),
+
   // CART
   previewCart: (items) =>
     fetch('/api/cart/preview', {

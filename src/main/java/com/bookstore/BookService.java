@@ -130,6 +130,15 @@ public class BookService {
         bookTable.deleteItem(Key.builder().partitionValue(id).build());
     }
 
+    /** Delete all books with the given title (exact match via GSI). Returns count deleted. */
+    public int deleteByTitle(String title) {
+        List<Book> books = findByTitle(title);
+        for (Book book : books) {
+            deleteBook(book.getId());
+        }
+        return books.size();
+    }
+
 
     /** List all books (scan). */
     public List<Book> listAllBooks() {

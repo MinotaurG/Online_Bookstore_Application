@@ -22,31 +22,29 @@ public class BrowsingHistoryController {
     }
 
     // accept only a bookId to avoid fragile JSON mapping issues
-    public static record ViewRequest(String bookId) {}
+    public static record ViewRequest(String bookId) {
+    }
 
     @PostMapping("/view")
     public ResponseEntity<?> view(HttpSession session, @RequestBody ViewRequest req) {
-        String username = (String) session.getAttribute("username");
-        if (username == null || username.isBlank()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No user is logged in");
-        }
         if (req == null || req.bookId() == null || req.bookId().isBlank()) {
             return ResponseEntity.badRequest().body("Missing bookId");
         }
         Book b = bookService.getBookById(req.bookId());
-        if (b == null) {
-            return ResponseEntity.badRequest().body("Book not found: " + req.bookId());
-        }
-        historyService.view(username, b);
+        if (b == null) return ResponseEntity.badRequest().body("Book not found: " + req.bookId());
+
+        // use real username if logged in; else per-session guest key
+        String username = (String) session.getAttribute("username");
+        String key = (username != null && !username.isBlank()) ? username : "guest:" + session.getId();
+
+        historyService.view(key, b);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping
     public ResponseEntity<?> recent(HttpSession session) {
         String username = (String) session.getAttribute("username");
-        if (username == null || username.isBlank()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No user is logged in");
-        }
-        return ResponseEntity.ok(historyService.getRecent(username));
+        String key = (username != null && !username.isBlank()) ? username : "guest:" + session.getId();
+        return ResponseEntity.ok(historyService.getRecent(key));
     }
 }

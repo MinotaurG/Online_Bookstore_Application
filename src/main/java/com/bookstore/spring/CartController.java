@@ -66,6 +66,17 @@ public class CartController {
             }
             Book b = bookService.getBookById(it.bookId());
             if (b == null) return ResponseEntity.badRequest().body("Book not found: " + it.bookId());
+
+            // NEW: validate quantity
+            if (it.quantity() <= 0) {
+                return ResponseEntity.badRequest().body("Quantity must be >= 1 for " + b.getTitle());
+            }
+
+            // NEW: enforce stock at preview time (fail fast)
+            if (b.getStockQuantity() < it.quantity()) {
+                return ResponseEntity.status(409).body("Insufficient stock for: " + b.getTitle());
+            }
+
             cart.addBook(b, it.quantity());
         }
 

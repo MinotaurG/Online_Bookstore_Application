@@ -43,6 +43,14 @@ public class BookServiceAdapter {
         bookService.saveOrUpdateBookByTitle(book);
     }
 
+    public void deleteById(String id) {
+        bookService.deleteBook(id);
+    }
+
+    public int deleteByTitle(String title) {
+        return bookService.deleteByTitle(title);
+    }
+
     @PreDestroy
     public void shutdown() {
         try {

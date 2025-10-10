@@ -1,6 +1,9 @@
 import { BrowserRouter, Routes, Route, Link, useNavigate } from 'react-router-dom'
 import { useEffect, useMemo, useState } from 'react'
 import { api } from './api'
+import Register from './pages/Register.jsx'
+import Admin from './pages/Admin.jsx'
+import AdminSeed from './pages/AdminSeed.jsx'
 
 function Nav({ user, onLogout }) {
   return (
@@ -10,14 +13,18 @@ function Nav({ user, onLogout }) {
       <Link to="/orders">My Orders</Link>
       <Link to="/history">History</Link>
       <Link to="/recs">Recommendations</Link>
-      <div style={{marginLeft:'auto'}}>
+      <div style={{marginLeft:'auto', display:'flex', gap:8, alignItems:'center'}}>
+        <span style={{marginRight:12}}>
+          {user ? `Hi, ${user.username}` : 'Welcome, guest'}
+        </span>
+        {user?.isAdmin && <Link to="/admin"><button>Admin</button></Link>}
         {user ? (
-          <>
-            <span style={{marginRight:8}}>Hi, {user.username}</span>
-            <button onClick={onLogout}>Logout</button>
-          </>
+          <button onClick={onLogout}>Logout</button>
         ) : (
-          <Link to="/login"><button>Login</button></Link>
+          <>
+            <Link to="/register"><button>Register</button></Link>
+            <Link to="/login"><button>Login</button></Link>
+          </>
         )}
       </div>
     </nav>
@@ -50,14 +57,16 @@ function Login({ setUser }) {
   )
 }
 
-function Catalog({ addToCart }) {
+function Catalog({ addToCart, setAllBooks, user }) {
   const [q,setQ] = useState('')
   const [books,setBooks] = useState([])
   const [err,setErr] = useState('')
   const load = async () => {
     try {
       const data = q ? await api.searchBooks(q) : await api.listBooks()
-      setBooks(data); setErr('')
+      setBooks(data)
+      setAllBooks(data) // Update the global books list for stock tracking
+      setErr('')
     } catch (e) { setErr(e.message) }
   }
   useEffect(() => { load() }, []) // load on mount
@@ -69,21 +78,52 @@ function Catalog({ addToCart }) {
       </div>
       {err && <div style={{color:'red'}}>{err}</div>}
       <ul>
-        {books.map(b => (
-          <li key={b.id} style={{margin:'12px 0'}}>
-            <b>{b.title}</b> — {b.author} — ₹{b.price} — Stock: {b.stockQuantity} &nbsp;
-            <button onClick={()=>addToCart(b.id, 1)}>Add</button>
-            <button onClick={()=>api.viewBook(b.id)}>Mark as Viewed</button>
-          </li>
-        ))}
+        {books.map(b => {
+          const out = (b.stockQuantity ?? 0) <= 0;
+          return (
+            <li key={b.id} style={{margin:'12px 0'}}>
+              <b>{b.title}</b> — {b.author} — ₹{b.price} — Stock: {b.stockQuantity}
+              &nbsp;
+              <button
+                onClick={() => addToCart(b.id, 1)}
+                disabled={out}
+                title={out ? 'Out of stock' : 'Add to cart'}
+              >
+                Add
+              </button>
+              <button onClick={() => api.viewBook(b.id)}>Mark as Viewed</button>
+              {user?.isAdmin && (
+                <button
+                  style={{marginLeft:8}}
+                  onClick={async () => {
+                    if (!confirm(`Delete "${b.title}"?`)) return;
+                    try {
+                      await api.deleteBookById(b.id);
+                      // refresh list
+                      await load();
+                    } catch (e) { alert(e.message) }
+                  }}
+                >
+                  Delete
+                </button>
+              )}
+            </li>
+          );
+        })}
       </ul>
     </div>
   )
 }
 
-function Cart({ cart, setCart, setPreview }) {
+function Cart({ cart, setCart, setPreview, stockMap }) {
   const remove = (bookId) => setCart(prev => prev.filter(i => i.bookId !== bookId))
-  const changeQty = (bookId, qty) => setCart(prev => prev.map(i => i.bookId===bookId ? {...i, quantity: qty} : i))
+  
+  const changeQty = (bookId, qty) => {
+    const stock = stockMap.get(bookId) ?? 0;
+    const safe = Math.max(1, Math.min(qty || 1, stock || 1));
+    setCart(prev => prev.map(i => i.bookId === bookId ? {...i, quantity: safe} : i));
+  }
+  
   const preview = async () => {
     if (cart.length===0) { setPreview(null); return; }
     const p = await api.previewCart(cart)
@@ -95,13 +135,23 @@ function Cart({ cart, setCart, setPreview }) {
     <div style={{padding:16}}>
       <h3>Cart</h3>
       {cart.length===0 && <div>Cart is empty.</div>}
-      {cart.map(i => (
-        <div key={i.bookId} style={{display:'flex', gap:8, alignItems:'center', margin:'8px 0'}}>
-          <code>{i.bookId}</code>
-          <input type="number" min="1" value={i.quantity} onChange={e=>changeQty(i.bookId, parseInt(e.target.value||'1',10))} />
-          <button onClick={()=>remove(i.bookId)}>Remove</button>
-        </div>
-      ))}
+      {cart.map(i => {
+        const stock = stockMap.get(i.bookId) ?? 0;
+        return (
+          <div key={i.bookId} style={{display:'flex', gap:8, alignItems:'center', margin:'8px 0'}}>
+            <code>{i.bookId}</code>
+            <input 
+              type="number" 
+              min="1" 
+              max={stock}
+              value={i.quantity} 
+              onChange={e=>changeQty(i.bookId, parseInt(e.target.value||'1',10))} 
+            />
+            <span style={{fontSize:'0.9em', color:'#666'}}>/ {stock} available</span>
+            <button onClick={()=>remove(i.bookId)}>Remove</button>
+          </div>
+        );
+      })}
     </div>
   )
 }
@@ -136,13 +186,39 @@ function Checkout({ cart, preview, clearCart }) {
 }
 
 function Orders() {
+  const nav = useNavigate()
   const [orders,setOrders] = useState([])
   const [err,setErr] = useState('')
+  const [needsAuth, setNeedsAuth] = useState(false)
+  
   const load = async () => {
-    try { setOrders(await api.myOrders()); setErr('') }
-    catch (e) { setErr(e.message) }
+    try { 
+      setOrders(await api.myOrders())
+      setErr('')
+      setNeedsAuth(false)
+    }
+    catch (e) { 
+      if (e.message.includes('401') || e.message.includes('Unauthorized') || e.message.includes('log in')) {
+        setNeedsAuth(true)
+        setErr('Please log in to view your orders')
+      } else {
+        setErr(e.message)
+      }
+    }
   }
+  
   useEffect(()=>{ load() },[])
+  
+  if (needsAuth) {
+    return (
+      <div style={{padding:16}}>
+        <h3>My Orders</h3>
+        <div style={{color:'orange', marginBottom:12}}>Please log in to view your orders</div>
+        <button onClick={() => nav('/login')}>Go to Login</button>
+      </div>
+    )
+  }
+  
   return (
     <div style={{padding:16}}>
       <h3>My Orders</h3>
@@ -202,13 +278,27 @@ export default function App() {
   const [user,setUser] = useState(null)
   const [cart,setCart] = useState([]) // [{ bookId, quantity }]
   const [preview,setPreview] = useState(null)
+  const [allBooks, setAllBooks] = useState([]) // Track all books for stock management
 
-  const addToCart = (bookId, quantity=1) => {
+  // Create a stock map from allBooks
+  const stockMap = useMemo(() => {
+    const m = new Map();
+    (allBooks || []).forEach(b => m.set(b.id, Math.max(0, b.stockQuantity ?? 0)));
+    return m;
+  }, [allBooks]);
+
+  const addToCart = (bookId, inc = 1) => {
+    const stock = stockMap.get(bookId) ?? 0;
+    if (stock <= 0) return; // ignore if out of stock
+    
     setCart(prev => {
-      const found = prev.find(i => i.bookId === bookId)
-      if (found) return prev.map(i => i.bookId===bookId ? {...i, quantity: i.quantity + quantity} : i)
-      return [...prev, { bookId, quantity }]
-    })
+      const found = prev.find(i => i.bookId === bookId);
+      if (found) {
+        const newQty = Math.min(found.quantity + inc, stock);
+        return prev.map(i => i.bookId === bookId ? {...i, quantity: newQty} : i);
+      }
+      return [...prev, { bookId, quantity: Math.min(inc, stock) }];
+    });
   }
 
   const clearCart = () => { setCart([]); setPreview(null) }
@@ -228,17 +318,20 @@ export default function App() {
     <BrowserRouter>
       <Nav user={user} onLogout={onLogout} />
       <Routes>
-        <Route path="/" element={<Catalog addToCart={addToCart} />} />
+        <Route path="/" element={<Catalog addToCart={addToCart} setAllBooks={setAllBooks} user={user} />} />
         <Route path="/login" element={<Login setUser={setUser} />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/cart" element={
           <div style={{display:'grid', gridTemplateColumns:'1fr 1fr'}}>
-            <Cart cart={cart} setCart={setCart} setPreview={setPreview} />
+            <Cart cart={cart} setCart={setCart} setPreview={setPreview} stockMap={stockMap} />
             <Checkout cart={cart} preview={preview} clearCart={clearCart} />
           </div>
         } />
         <Route path="/orders" element={<Orders />} />
         <Route path="/history" element={<History />} />
         <Route path="/recs" element={<Recs />} />
+        <Route path="/admin" element={<Admin />} />
+        <Route path="/admin/seed" element={<AdminSeed />} />
       </Routes>
     </BrowserRouter>
   )

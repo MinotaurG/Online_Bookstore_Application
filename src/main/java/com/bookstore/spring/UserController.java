@@ -33,10 +33,14 @@ public class UserController {
                     .body("Username already exists: " + request.username());
         }
         String email = request.email() == null ? "" : request.email();
-        User user = new User(request.username(), email, request.password());
+        User user = new User(request.username(), email, request.password(), false);
         userRepository.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(
-                Map.of("username", user.getUsername(), "email", user.getEmail()));
+                Map.of(
+                        "username", user.getUsername(),
+                        "email", user.getEmail(),
+                        "isAdmin", user.isAdmin()
+                ));
     }
 
     /** Log in a user. */
@@ -55,7 +59,8 @@ public class UserController {
             return ResponseEntity.ok(Map.of(
                     "message", "Login successful",
                     "username", user.getUsername(),
-                    "email", user.getEmail()));
+                    "email", user.getEmail(),
+                    "isAdmin", user.isAdmin()));  // <-- include flag
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
     }
@@ -79,6 +84,10 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
         }
         User user = userOpt.get();
-        return ResponseEntity.ok(Map.of("username", user.getUsername(), "email", user.getEmail()));
+        return ResponseEntity.ok(Map.of(
+                "username", user.getUsername(),
+                "email", user.getEmail(),
+                "isAdmin", user.isAdmin()
+        ));
     }
 }

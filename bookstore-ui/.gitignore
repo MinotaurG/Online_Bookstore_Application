@@ -22,3 +22,31 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# --- Frontend ---
+bookstore-ui/node_modules/
+bookstore-ui/dist/
+bookstore-ui/.vite/
+bookstore-ui/.DS_Store
+bookstore-ui/npm-debug.log*
+bookstore-ui/yarn-debug.log*
+bookstore-ui/yarn-error.log*
+bookstore-ui/.env
+bookstore-ui/.env.local
+bookstore-ui/.env.*.local
+
+# --- OS / IDE ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.iml
+
+# --- Java backend ---
+target/
+*.log
+*.class
+*.jar
+*.war
+*.ear
+*.iml
