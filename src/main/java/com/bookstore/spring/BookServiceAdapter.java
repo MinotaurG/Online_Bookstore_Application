@@ -22,10 +22,13 @@ public class BookServiceAdapter {
         this.bookService = new BookService();
     }
 
+    // reads
+    @org.springframework.cache.annotation.Cacheable("booksAll")
     public List<Book> listAll() {
         return bookService.listAllBooks();
     }
 
+    @org.springframework.cache.annotation.Cacheable(value = "booksById", key = "#id")
     public Optional<Book> findById(String id) {
         return Optional.ofNullable(bookService.getBookById(id));
     }
@@ -38,11 +41,14 @@ public class BookServiceAdapter {
         return bookService.searchByTitleOrAuthorContains(q);
     }
 
+    // writes (admin add/update/delete/bulk) → evict caches
+    @org.springframework.cache.annotation.CacheEvict(value={"booksAll","booksById"}, allEntries=true)
     public void save(Book book) {
         // choose idempotent upsert to avoid duplicates when called from web
         bookService.saveOrUpdateBookByTitle(book);
     }
 
+    @org.springframework.cache.annotation.CacheEvict(value={"booksAll","booksById"}, allEntries=true)
     public void deleteById(String id) {
         bookService.deleteBook(id);
     }
