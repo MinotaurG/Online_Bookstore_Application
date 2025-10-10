@@ -1,0 +1,52 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# --- Frontend ---
+bookstore-ui/node_modules/
+bookstore-ui/dist/
+bookstore-ui/.vite/
+bookstore-ui/.DS_Store
+bookstore-ui/npm-debug.log*
+bookstore-ui/yarn-debug.log*
+bookstore-ui/yarn-error.log*
+bookstore-ui/.env
+bookstore-ui/.env.local
+bookstore-ui/.env.*.local
+
+# --- OS / IDE ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.iml
+
+# --- Java backend ---
+target/
+*.log
+*.class
+*.jar
+*.war
+*.ear
+*.iml

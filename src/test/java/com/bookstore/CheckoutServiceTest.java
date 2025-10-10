@@ -1,78 +1,139 @@
 package com.bookstore;
 
-import org.junit.jupiter.api.*;
-
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import java.math.BigDecimal;
-
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-/**
- * Deterministic CheckoutService tests:
- * - use deterministic ids so cleanup is reliable
- * - upsert books using saveOrUpdateBookByTitle so repeated test runs are safe
- * - delete test books at the end of each test to avoid test-data leakage
- */
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class CheckoutServiceTest {
+class CheckoutServiceTest {
 
+    @Mock
+    private OrderRepository orderRepository;
+
+    @Mock
     private BookService bookService;
 
-    @BeforeAll
-    void beforeAll() {
-        bookService = new BookService();
-    }
+    private CheckoutService checkoutService;
+    private Cart cart;
+    private Book book1;
 
-    @AfterAll
-    void afterAll() {
-        if (bookService != null) bookService.close();
-    }
-
-    @AfterEach
-    void cleanupEach() {
-        // Remove known test titles if present
-        bookService.findByTitle("Clean Coder").forEach(b -> bookService.deleteBook(b.getId()));
-        bookService.findByTitle("Refactoring").forEach(b -> bookService.deleteBook(b.getId()));
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+        checkoutService = new CheckoutService(orderRepository, bookService);
+        cart = new Cart();
+        book1 = new Book("1", "Book1", "Author1", "Genre1", new BigDecimal("25.00"), 10);
     }
 
     @Test
-    void testCheckoutFailsIfInsufficientStock() {
-        String id = DeterministicId.forBook("Clean Coder", "Robert C. Martin");
-        Book b = new Book(id, "Clean Coder", "Robert C. Martin",
-                "Programming", new BigDecimal("40.00"), 1);
+    void testCheckout_createsAndSavesOrder() {
+        cart.addBook(book1, 2);
+        when(bookService.getBookById("1")).thenReturn(book1);
 
-        // upsert to avoid duplicates
-        bookService.saveOrUpdateBookByTitle(b);
+        Order order = checkoutService.checkout("user1", cart);
 
-        Cart cart = new Cart();
-        cart.addBook(b, 5);
-
-        CheckoutService checkout = new CheckoutService(new InMemoryOrderRepository(), bookService);
-
-        assertThrows(IllegalStateException.class,
-                () -> checkout.checkout("bob", cart));
-
-        // explicit cleanup (also handled by @AfterEach)
-        bookService.findByTitle("Clean Coder").forEach(x -> bookService.deleteBook(x.getId()));
+        assertNotNull(order);
+        assertEquals("user1", order.getUsername());
+        assertEquals(new BigDecimal("50.00"), order.getTotal());
+        verify(orderRepository, times(1)).save(any(Order.class));
     }
 
     @Test
-    void testCheckoutSucceedsAndClearsCart() {
-        String id = DeterministicId.forBook("Refactoring", "Martin Fowler");
-        Book b = new Book(id, "Refactoring", "Martin Fowler",
-                "Programming", new BigDecimal("50.00"), 5);
+    void testCheckout_throwsExceptionForEmptyCart() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            checkoutService.checkout("user1", cart);
+        });
+    }
 
-        bookService.saveOrUpdateBookByTitle(b);
+    @Test
+    void testCheckout_throwsExceptionForNullCart() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            checkoutService.checkout("user1", null);
+        });
+    }
 
-        Cart cart = new Cart();
-        cart.addBook(b, 2);
+    @Test
+    void testCheckout_throwsExceptionWhenBookNotFound() {
+        cart.addBook(book1, 1);
+        when(bookService.getBookById("1")).thenReturn(null);
 
-        CheckoutService checkout = new CheckoutService(new InMemoryOrderRepository(), bookService);
-        Order order = checkout.checkout("alice", cart);
+        assertThrows(IllegalStateException.class, () -> {
+            checkoutService.checkout("user1", cart);
+        });
+    }
 
-        assertEquals(new BigDecimal("100.00"), order.getTotal());
+    @Test
+    void testCheckout_throwsExceptionForInsufficientStock() {
+        cart.addBook(book1, 15); // more than available stock
+        when(bookService.getBookById("1")).thenReturn(book1);
+
+        assertThrows(IllegalStateException.class, () -> {
+            checkoutService.checkout("user1", cart);
+        });
+    }
+
+    @Test
+    void testCheckout_decrementsStock() {
+        cart.addBook(book1, 3);
+        when(bookService.getBookById("1")).thenReturn(book1);
+
+        checkoutService.checkout("user1", cart);
+
+        verify(bookService, times(1)).saveOrUpdateBookByTitle(argThat(book ->
+                book.getId().equals("1") && book.getStockQuantity() == 7
+        ));
+    }
+
+    @Test
+    void testCheckout_clearsCartAfterSuccess() {
+        cart.addBook(book1, 2);
+        when(bookService.getBookById("1")).thenReturn(book1);
+
+        checkoutService.checkout("user1", cart);
+
         assertTrue(cart.isEmpty());
+    }
 
-        // explicit cleanup
-        bookService.findByTitle("Refactoring").forEach(x -> bookService.deleteBook(x.getId()));
+    @Test
+    void testCheckout_worksWithoutBookService() {
+        CheckoutService serviceWithoutBookService = new CheckoutService(orderRepository, null);
+        cart.addBook(book1, 2);
+
+        Order order = serviceWithoutBookService.checkout("user1", cart);
+
+        assertNotNull(order);
+        verify(orderRepository, times(1)).save(any(Order.class));
+    }
+
+    @Test
+    void testCheckout_allowsNullUsername() {
+        cart.addBook(book1, 1);
+        when(bookService.getBookById("1")).thenReturn(book1);
+
+        Order order = checkoutService.checkout(null, cart);
+
+        assertNotNull(order);
+        assertNull(order.getUsername());
+    }
+
+    @Test
+    void testCheckout_preventsNegativeStock() {
+        Book bookWithLowStock = new Book("2", "Book2", "Author2", "Genre", new BigDecimal("10"), 2);
+        cart.addBook(bookWithLowStock, 3); // requesting more than available
+        when(bookService.getBookById("2")).thenReturn(bookWithLowStock);
+
+        assertThrows(IllegalStateException.class, () -> {
+            checkoutService.checkout("user1", cart);
+        });
+    }
+
+    @Test
+    void testConstructor_throwsExceptionForNullRepository() {
+        assertThrows(NullPointerException.class, () -> {
+            new CheckoutService(null, bookService);
+        });
     }
 }
