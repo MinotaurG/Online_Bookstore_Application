@@ -37,8 +37,9 @@ public class DynamoDbUserRepository implements UserRepository {
     }
 
     @Override
-    public void save(User user) {
+    public User save(User user) {
         table.putItem(toDdb(user));
+        return user;
     }
 
     @Override

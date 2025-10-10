@@ -23,8 +23,4 @@ public class AdminSeeder {
             }
         };
     }
-
-    // Uncomment to use BCrypt now:
-    @Bean
-    public BCryptPasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(); }
 }

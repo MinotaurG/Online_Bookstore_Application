@@ -3,6 +3,7 @@ package com.bookstore.config;
 import com.bookstore.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 /**
  * Central place to declare beans that complement existing BookServiceConfig
@@ -43,4 +44,7 @@ public class ServiceConfig {
         // If so, keep using it. For a simple in-memory fallback:
         return new RecommendationService(repo);
     }
+
+    @Bean public BCryptPasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(); }
+
 }
