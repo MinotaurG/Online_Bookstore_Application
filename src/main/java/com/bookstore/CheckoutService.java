@@ -1,6 +1,7 @@
 package com.bookstore;
 
 import java.math.BigDecimal;
+import java.util.*;
 import java.util.Map;
 import java.util.Objects;
 
@@ -29,6 +30,9 @@ public class CheckoutService {
             throw new IllegalArgumentException("Cart is empty");
         }
 
+        // Collect all stock validation errors
+        List<String> stockErrors = new ArrayList<>();
+
         // validate availability (optional)
         for (Map.Entry<String, CartItem> e : cart.getItems().entrySet()) {
             String bookId = e.getKey();
@@ -39,11 +43,20 @@ public class CheckoutService {
                 if (b == null) {
                     throw new IllegalStateException("Book not found: " + bookId);
                 }
-                // simple stock check (if Book has stockQuantity)
+
+                // Stock check with detailed error message
                 if (b.getStockQuantity() != null && b.getStockQuantity() < item.getQuantity()) {
-                    throw new IllegalStateException("Not enough stock for: " + b.getTitle());
+                    stockErrors.add(String.format(
+                            "%s: requested %d but only %d available",
+                            b.getTitle(), item.getQuantity(), b.getStockQuantity()
+                    ));
                 }
             }
+        }
+
+        // If any stock errors, throw them all at once
+        if (!stockErrors.isEmpty()) {
+            throw new IllegalStateException("Insufficient stock: " + String.join("; ", stockErrors));
         }
 
         BigDecimal total = cart.calculateTotal();
@@ -53,7 +66,7 @@ public class CheckoutService {
         // persist order
         orderRepo.save(order);
 
-        // optionally decrement stock in BookService (demo, not transactional)
+        // Decrement stock atomically
         if (bookService != null) {
             for (CartItem item : cart.getItems().values()) {
                 Book b = bookService.getBookById(item.getBookId());
@@ -61,7 +74,14 @@ public class CheckoutService {
                     int newStock = b.getStockQuantity() - item.getQuantity();
                     if (newStock < 0) newStock = 0;
                     b.setStockQuantity(newStock);
-                    bookService.saveOrUpdateBookByTitle(b); // overwrite in DynamoDB; BookService.saveBook exists
+                    bookService.saveOrUpdateBookByTitle(b); // Direct save, not saveOrUpdateByTitle
+
+                    // Log for debugging
+                    System.out.println(String.format(
+                            "Stock updated: %s (%s) - Old: %d, Sold: %d, New: %d",
+                            b.getTitle(), b.getId(), b.getStockQuantity() + item.getQuantity(),
+                            item.getQuantity(), newStock
+                    ));
                 }
             }
         }

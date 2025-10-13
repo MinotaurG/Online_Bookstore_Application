@@ -1,338 +1,313 @@
-import { BrowserRouter, Routes, Route, Link, useNavigate } from 'react-router-dom'
-import { useEffect, useMemo, useState } from 'react'
-import { api } from './api'
-import Register from './pages/Register.jsx'
-import Admin from './pages/Admin.jsx'
-import AdminSeed from './pages/AdminSeed.jsx'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useEffect, useMemo, useState, useCallback } from 'react';
+import { ThemeProvider, CssBaseline, Box, CircularProgress } from '@mui/material';
+import { ToastContainer } from 'react-toastify'; 
+import 'react-toastify/dist/ReactToastify.css';
+import { getTheme } from './theme';
+import { api } from './api';
 
-function Nav({ user, onLogout }) {
-  return (
-    <nav style={{display:'flex', gap:12, padding:12, borderBottom:'1px solid #ddd'}}>
-      <Link to="/">Catalog</Link>
-      <Link to="/cart">Cart</Link>
-      <Link to="/orders">My Orders</Link>
-      <Link to="/history">History</Link>
-      <Link to="/recs">Recommendations</Link>
-      <div style={{marginLeft:'auto', display:'flex', gap:8, alignItems:'center'}}>
-        <span style={{marginRight:12}}>
-          {user ? `Hi, ${user.username}` : 'Welcome, guest'}
-        </span>
-        {user?.isAdmin && <Link to="/admin"><button>Admin</button></Link>}
-        {user ? (
-          <button onClick={onLogout}>Logout</button>
-        ) : (
-          <>
-            <Link to="/register"><button>Register</button></Link>
-            <Link to="/login"><button>Login</button></Link>
-          </>
-        )}
-      </div>
-    </nav>
-  )
-}
+// Layout
+import Nav from './components/Layout/Nav';
 
-function Login({ setUser }) {
-  const nav = useNavigate()
-  const [username,setUsername] = useState('')
-  const [password,setPassword] = useState('')
-  const [err,setErr] = useState('')
-  const submit = async (e) => {
-    e.preventDefault()
-    setErr('')
-    try {
-      await api.login(username, password)
-      const me = await api.me()
-      setUser(me)
-      nav('/')
-    } catch (e) { setErr(e.message) }
-  }
-  return (
-    <form onSubmit={submit} style={{padding:16, maxWidth:360}}>
-      <h3>Login</h3>
-      {err && <div style={{color:'red', marginBottom:8}}>{err}</div>}
-      <input placeholder="username" value={username} onChange={e=>setUsername(e.target.value)} />
-      <input placeholder="password" type="password" value={password} onChange={e=>setPassword(e.target.value)} />
-      <button type="submit">Login</button>
-    </form>
-  )
-}
+// Auth
+import Login from './components/Auth/Login';
+import ProtectedRoute from './components/Auth/ProtectedRoute';
 
-function Catalog({ addToCart, setAllBooks, user }) {
-  const [q,setQ] = useState('')
-  const [books,setBooks] = useState([])
-  const [err,setErr] = useState('')
-  const load = async () => {
-    try {
-      const data = q ? await api.searchBooks(q) : await api.listBooks()
-      setBooks(data)
-      setAllBooks(data) // Update the global books list for stock tracking
-      setErr('')
-    } catch (e) { setErr(e.message) }
-  }
-  useEffect(() => { load() }, []) // load on mount
-  return (
-    <div style={{padding:16}}>
-      <div style={{display:'flex', gap:8}}>
-        <input placeholder="Search books..." value={q} onChange={e=>setQ(e.target.value)} />
-        <button onClick={load}>Search</button>
-      </div>
-      {err && <div style={{color:'red'}}>{err}</div>}
-      <ul>
-        {books.map(b => {
-          const out = (b.stockQuantity ?? 0) <= 0;
-          return (
-            <li key={b.id} style={{margin:'12px 0'}}>
-              <b>{b.title}</b> — {b.author} — ₹{b.price} — Stock: {b.stockQuantity}
-              &nbsp;
-              <button
-                onClick={() => addToCart(b.id, 1)}
-                disabled={out}
-                title={out ? 'Out of stock' : 'Add to cart'}
-              >
-                Add
-              </button>
-              <button onClick={() => api.viewBook(b.id)}>Mark as Viewed</button>
-              {user?.isAdmin && (
-                <button
-                  style={{marginLeft:8}}
-                  onClick={async () => {
-                    if (!confirm(`Delete "${b.title}"?`)) return;
-                    try {
-                      await api.deleteBookById(b.id);
-                      // refresh list
-                      await load();
-                    } catch (e) { alert(e.message) }
-                  }}
-                >
-                  Delete
-                </button>
-              )}
-            </li>
-          );
-        })}
-      </ul>
-    </div>
-  )
-}
+// Books
+import Catalog from './components/Books/Catalog';
 
-function Cart({ cart, setCart, setPreview, stockMap }) {
-  const remove = (bookId) => setCart(prev => prev.filter(i => i.bookId !== bookId))
-  
-  const changeQty = (bookId, qty) => {
-    const stock = stockMap.get(bookId) ?? 0;
-    const safe = Math.max(1, Math.min(qty || 1, stock || 1));
-    setCart(prev => prev.map(i => i.bookId === bookId ? {...i, quantity: safe} : i));
-  }
-  
-  const preview = async () => {
-    if (cart.length===0) { setPreview(null); return; }
-    const p = await api.previewCart(cart)
-    setPreview(p)
-  }
-  useEffect(()=>{ preview() }, [cart]) // preview whenever cart changes
+// Cart
+import Cart from './components/Cart/Cart';
+import Checkout from './components/Cart/Checkout';
 
-  return (
-    <div style={{padding:16}}>
-      <h3>Cart</h3>
-      {cart.length===0 && <div>Cart is empty.</div>}
-      {cart.map(i => {
-        const stock = stockMap.get(i.bookId) ?? 0;
-        return (
-          <div key={i.bookId} style={{display:'flex', gap:8, alignItems:'center', margin:'8px 0'}}>
-            <code>{i.bookId}</code>
-            <input 
-              type="number" 
-              min="1" 
-              max={stock}
-              value={i.quantity} 
-              onChange={e=>changeQty(i.bookId, parseInt(e.target.value||'1',10))} 
-            />
-            <span style={{fontSize:'0.9em', color:'#666'}}>/ {stock} available</span>
-            <button onClick={()=>remove(i.bookId)}>Remove</button>
-          </div>
-        );
-      })}
-    </div>
-  )
-}
+// Orders & History
+import Orders from './components/Orders/Orders';
+import History from './components/History/History';
 
-function Checkout({ cart, preview, clearCart }) {
-  const [msg,setMsg] = useState('')
-  const doCheckout = async () => {
-    setMsg('')
-    try {
-      const order = await api.checkout(cart)
-      setMsg(`Order placed: ${order.orderId} total ₹${order.total}`)
-      clearCart()
-    } catch (e) { setMsg(e.message) }
-  }
-  return (
-    <div style={{padding:16}}>
-      <h3>Checkout</h3>
-      {preview && (
-        <>
-          <div>Total: ₹{preview.total}</div>
-          <ul>
-            {preview.items?.map(li => (
-              <li key={li.bookId}>{li.title} x {li.quantity} (₹{li.unitPrice})</li>
-            ))}
-          </ul>
-        </>
-      )}
-      <button disabled={!cart.length} onClick={doCheckout}>Place Order</button>
-      {msg && <div style={{marginTop:8}}>{msg}</div>}
-    </div>
-  )
-}
+// Recommendations
+import Recommendations from './components/Recommendations/Recommendations';
 
-function Orders() {
-  const nav = useNavigate()
-  const [orders,setOrders] = useState([])
-  const [err,setErr] = useState('')
-  const [needsAuth, setNeedsAuth] = useState(false)
-  
-  const load = async () => {
-    try { 
-      setOrders(await api.myOrders())
-      setErr('')
-      setNeedsAuth(false)
-    }
-    catch (e) { 
-      if (e.message.includes('401') || e.message.includes('Unauthorized') || e.message.includes('log in')) {
-        setNeedsAuth(true)
-        setErr('Please log in to view your orders')
-      } else {
-        setErr(e.message)
-      }
-    }
-  }
-  
-  useEffect(()=>{ load() },[])
-  
-  if (needsAuth) {
-    return (
-      <div style={{padding:16}}>
-        <h3>My Orders</h3>
-        <div style={{color:'orange', marginBottom:12}}>Please log in to view your orders</div>
-        <button onClick={() => nav('/login')}>Go to Login</button>
-      </div>
-    )
-  }
-  
-  return (
-    <div style={{padding:16}}>
-      <h3>My Orders</h3>
-      {err && <div style={{color:'red'}}>{err}</div>}
-      <ul>
-        {orders.map(o => (
-          <li key={o.orderId}>
-            {o.orderId} — total ₹{o.total}
-          </li>
-        ))}
-      </ul>
-    </div>
-  )
-}
-
-function History() {
-  const [items,setItems] = useState([])
-  const [err,setErr] = useState('')
-  useEffect(() => {
-    (async () => {
-      try { setItems(await api.history()); setErr('') }
-      catch (e) { setErr(e.message) }
-    })()
-  }, [])
-  return (
-    <div style={{padding:16}}>
-      <h3>Recently Viewed</h3>
-      {err && <div style={{color:'red'}}>{err}</div>}
-      <ul>
-        {items.map(b => <li key={b.id}>{b.title} — {b.author}</li>)}
-      </ul>
-    </div>
-  )
-}
-
-function Recs() {
-  const [recs,setRecs] = useState([])
-  const [err,setErr] = useState('')
-  useEffect(() => {
-    (async () => {
-      try { setRecs(await api.recommendations()); setErr('') }
-      catch (e) { setErr(e.message) }
-    })()
-  }, [])
-  return (
-    <div style={{padding:16}}>
-      <h3>Recommended for you</h3>
-      {err && <div style={{color:'red'}}>{err}</div>}
-      <ul>
-        {recs.map(b => <li key={b.id}>{b.title} — ₹{b.price}</li>)}
-      </ul>
-    </div>
-  )
-}
+// Pages
+import Register from './pages/Register';
+import Admin from './pages/Admin';
+import AdminSeed from './pages/AdminSeed';
 
 export default function App() {
-  const [user,setUser] = useState(null)
-  const [cart,setCart] = useState([]) // [{ bookId, quantity }]
-  const [preview,setPreview] = useState(null)
-  const [allBooks, setAllBooks] = useState([]) // Track all books for stock management
+  // User state
+  const [user, setUser] = useState(null);
+  const [userLoading, setUserLoading] = useState(true);
 
-  // Create a stock map from allBooks
+  // Cart state
+  const [cart, setCart] = useState([]);
+  const [preview, setPreview] = useState(null);
+
+  // Books state
+  const [allBooks, setAllBooks] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  // Dark mode state - check localStorage first, default to light mode
+  const [darkMode, setDarkMode] = useState(() => {
+    const saved = localStorage.getItem('darkMode');
+    return saved ? JSON.parse(saved) : false;
+  });
+
+  // Create theme based on dark mode state
+  const theme = useMemo(() => getTheme(darkMode ? 'dark' : 'light'), [darkMode]);
+
+  // Toggle dark mode function
+  const toggleDarkMode = () => {
+    setDarkMode(prev => {
+      const newMode = !prev;
+      localStorage.setItem('darkMode', JSON.stringify(newMode));
+      return newMode;
+    });
+  };
+
+  // Load books from API
+  const loadBooks = useCallback(async () => {
+    setLoading(true);
+    try {
+      const fresh = await api.listBooks();
+      setAllBooks(fresh);
+      console.log('Books refreshed:', fresh.length, 'books loaded');
+    } catch (e) {
+      console.error('Failed to load books', e);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Create a map of book IDs to stock quantities
   const stockMap = useMemo(() => {
     const m = new Map();
     (allBooks || []).forEach(b => m.set(b.id, Math.max(0, b.stockQuantity ?? 0)));
     return m;
   }, [allBooks]);
 
-  const addToCart = (bookId, inc = 1) => {
+  // Add item to cart
+  const addToCart = useCallback((bookId, inc = 1) => {
     const stock = stockMap.get(bookId) ?? 0;
-    if (stock <= 0) return; // ignore if out of stock
-    
+
+    if (stock <= 0) {
+      alert('Sorry, this item is out of stock!');
+      return;
+    }
+
     setCart(prev => {
       const found = prev.find(i => i.bookId === bookId);
+      
       if (found) {
         const newQty = Math.min(found.quantity + inc, stock);
+        if (newQty === found.quantity) {
+          alert(`Cannot add more. Only ${stock} items available in stock.`);
+        }
         return prev.map(i => i.bookId === bookId ? {...i, quantity: newQty} : i);
       }
+      
       return [...prev, { bookId, quantity: Math.min(inc, stock) }];
     });
-  }
+  }, [stockMap]);
 
-  const clearCart = () => { setCart([]); setPreview(null) }
+  // Clear cart
+  const clearCart = useCallback(() => {
+    setCart([]);
+    setPreview(null);
+  }, []);
 
+  // Logout function
   const onLogout = async () => {
-    await api.logout()
-    setUser(null)
-  }
+    try {
+      await api.logout();
+      setUser(null);
+      setCart([]);
+      setPreview(null);
+      localStorage.removeItem('cart');
+      window.location.href = '/login';
+    } catch (e) {
+      console.error('Logout failed', e);
+    }
+  };
 
+  // Load user and books when app starts
   useEffect(() => {
     (async () => {
-      try { const me = await api.me(); setUser(me) } catch {}
-    })()
-  }, [])
+      try {
+        setUserLoading(true);
+        const me = await api.me();
+        setUser(me);
+        console.log('✅ User loaded:', me);
+      } catch {
+        console.log('ℹ️ No user logged in');
+        setUser(null);
+      } finally {
+        setUserLoading(false);
+      }
+    })();
+
+    loadBooks();
+  }, [loadBooks]);
+
+  // Save cart to localStorage whenever it changes
+  useEffect(() => {
+    if (cart.length > 0) {
+      try {
+        localStorage.setItem('cart', JSON.stringify(cart));
+      } catch {}
+    }
+  }, [cart]);
+
+  // Load cart from localStorage when app starts
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('cart');
+      if (saved) {
+        setCart(JSON.parse(saved));
+      }
+    } catch {}
+  }, []);
+
+  // Update cart preview whenever cart changes
+  useEffect(() => {
+    if (cart.length > 0) {
+      (async () => {
+        try {
+          const p = await api.previewCart(cart);
+          setPreview(p);
+        } catch (e) {
+          console.error('Failed to preview cart', e);
+        }
+      })();
+    } else {
+      setPreview(null);
+    }
+  }, [cart]);
 
   return (
-    <BrowserRouter>
-      <Nav user={user} onLogout={onLogout} />
-      <Routes>
-        <Route path="/" element={<Catalog addToCart={addToCart} setAllBooks={setAllBooks} user={user} />} />
-        <Route path="/login" element={<Login setUser={setUser} />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/cart" element={
-          <div style={{display:'grid', gridTemplateColumns:'1fr 1fr'}}>
-            <Cart cart={cart} setCart={setCart} setPreview={setPreview} stockMap={stockMap} />
-            <Checkout cart={cart} preview={preview} clearCart={clearCart} />
-          </div>
-        } />
-        <Route path="/orders" element={<Orders />} />
-        <Route path="/history" element={<History />} />
-        <Route path="/recs" element={<Recs />} />
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/admin/seed" element={<AdminSeed />} />
-      </Routes>
-    </BrowserRouter>
-  )
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      
+      <BrowserRouter>
+        <Nav 
+          user={user} 
+          onLogout={onLogout} 
+          cartCount={cart.length}
+          darkMode={darkMode}
+          toggleDarkMode={toggleDarkMode}
+        />
+        
+        <Box sx={{ minHeight: '100vh', pb: 4 }}>
+          {userLoading ? (
+            <Box sx={{ 
+              display: 'flex', 
+              justifyContent: 'center', 
+              alignItems: 'center', 
+              minHeight: '80vh',
+              flexDirection: 'column',
+              gap: 2
+            }}>
+              <CircularProgress size={60} />
+              <Box sx={{ color: 'text.secondary' }}>Loading...</Box>
+            </Box>
+          ) : (
+            <Routes>
+              <Route 
+                path="/" 
+                element={
+                  <Catalog 
+                    addToCart={addToCart} 
+                    allBooks={allBooks}
+                    loadBooks={loadBooks}
+                    loading={loading}
+                    user={user} 
+                  />
+                } 
+              />
+              
+              <Route 
+                path="/login" 
+                element={<Login setUser={setUser} />} 
+              />
+              
+              <Route 
+                path="/register" 
+                element={<Register />} 
+              />
+              
+              <Route 
+                path="/cart" 
+                element={
+                  <Box sx={{ 
+                    display: 'grid', 
+                    gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, 
+                    gap: 3, 
+                    p: 3,
+                    maxWidth: '1400px',
+                    mx: 'auto'
+                  }}>
+                    <Cart 
+                      cart={cart} 
+                      setCart={setCart} 
+                      setPreview={setPreview} 
+                      stockMap={stockMap}
+                      allBooks={allBooks}
+                    />
+                    <Checkout 
+                      cart={cart} 
+                      preview={preview} 
+                      clearCart={clearCart} 
+                      onCheckoutSuccess={loadBooks}
+                    />
+                  </Box>
+                } 
+              />
+              
+              <Route 
+                path="/orders" 
+                element={<Orders />} 
+              />
+              
+              <Route 
+                path="/history" 
+                element={<History />} 
+              />
+              
+              <Route 
+                path="/recs" 
+                element={<Recommendations />} 
+              />
+              
+              <Route 
+                path="/admin" 
+                element={
+                  user?.isAdmin ? (
+                    <Admin onBooksUpdate={loadBooks} user={user} />
+                  ) : (
+                    <Navigate to="/login" replace />
+                  )
+                } 
+              />
+              
+              <Route 
+                path="/admin/seed" 
+                element={
+                  user?.isAdmin ? (
+                    <AdminSeed onSeedComplete={loadBooks} />
+                  ) : (
+                    <Navigate to="/login" replace />
+                  )
+                } 
+              />
+            </Routes>
+          )}
+        </Box>
+
+        <ToastContainer 
+          position="bottom-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          theme={darkMode ? 'dark' : 'light'}
+        />
+      </BrowserRouter>
+    </ThemeProvider>
+  );
 }

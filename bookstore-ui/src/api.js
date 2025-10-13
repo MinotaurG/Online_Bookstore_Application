@@ -37,8 +37,13 @@ export const api = {
     }).then(handle),
 
   // BOOKS
-  listBooks: () => fetch('/api/books').then(handle),
-  searchBooks: (q) => fetch(`/api/books/search?q=${encodeURIComponent(q)}`).then(handle),
+  listBooks: () => 
+	fetch('/api/books', {
+	  // avoid any browser /proxy caching of the catalog
+	  cache: 'no-store',
+	  credentials: 'include' // harmless for public GETs;
+  }).then(handle),
+  searchBooks: (q) => fetch(`/api/books/search?q=${encodeURIComponent(q)}`, { cache: 'no-store', credentials: 'include' }).then(handle),
   getBook: (id) => fetch(`/api/books/${id}`).then(handle),
 
   // DELETE BOOKS (refactored to use handle)
