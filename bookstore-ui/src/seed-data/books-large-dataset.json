@@ -1,0 +1,1602 @@
+[
+  {
+    "id": "b-drama-1",
+    "title": "Secret Space 1",
+    "author": "Ernest Hemingway",
+    "genre": "Drama",
+    "price": 33.65,
+    "stockQuantity": 37
+  },
+  {
+    "id": "b-horror-2",
+    "title": "Adventures in Quest 2",
+    "author": "J.R.R. Tolkien",
+    "genre": "Horror",
+    "price": 34.11,
+    "stockQuantity": 4
+  },
+  {
+    "id": "b-romance-3",
+    "title": "The Great Heart 3",
+    "author": "William Shakespeare",
+    "genre": "Romance",
+    "price": 36.32,
+    "stockQuantity": 83
+  },
+  {
+    "id": "b-science-fiction-4",
+    "title": "Dreams of Journey 4",
+    "author": "Agatha Christie",
+    "genre": "Science Fiction",
+    "price": 29,
+    "stockQuantity": 12
+  },
+  {
+    "id": "b-self-help-5",
+    "title": "Dark Ocean 5",
+    "author": "Philip K. Dick",
+    "genre": "Self-Help",
+    "price": 39.21,
+    "stockQuantity": 49
+  },
+  {
+    "id": "b-historical-fiction-6",
+    "title": "Past World 6",
+    "author": "George Orwell",
+    "genre": "Historical Fiction",
+    "price": 20.71,
+    "stockQuantity": 24
+  },
+  {
+    "id": "b-business-7",
+    "title": "Journey to Ocean 7",
+    "author": "Harper Lee",
+    "genre": "Business",
+    "price": 41.11,
+    "stockQuantity": 28
+  },
+  {
+    "id": "b-horror-8",
+    "title": "Bright City 8",
+    "author": "George Orwell",
+    "genre": "Horror",
+    "price": 34.86,
+    "stockQuantity": 82
+  },
+  {
+    "id": "b-poetry-9",
+    "title": "Shadows of Soul 9",
+    "author": "George R.R. Martin",
+    "genre": "Poetry",
+    "price": 23.97,
+    "stockQuantity": 27
+  },
+  {
+    "id": "b-historical-fiction-10",
+    "title": "Modern Revolution 10",
+    "author": "Leo Tolstoy",
+    "genre": "Historical Fiction",
+    "price": 54.54,
+    "stockQuantity": 82
+  },
+  {
+    "id": "b-self-help-11",
+    "title": "Mystery of World 11",
+    "author": "George R.R. Martin",
+    "genre": "Self-Help",
+    "price": 19.01,
+    "stockQuantity": 45
+  },
+  {
+    "id": "b-philosophy-12",
+    "title": "Journey to Revolution 12",
+    "author": "Harper Lee",
+    "genre": "Philosophy",
+    "price": 27.83,
+    "stockQuantity": 74
+  },
+  {
+    "id": "b-mystery-13",
+    "title": "Dark Kingdom 13",
+    "author": "Isaac Asimov",
+    "genre": "Mystery",
+    "price": 38.45,
+    "stockQuantity": 4
+  },
+  {
+    "id": "b-poetry-14",
+    "title": "Hidden World 14",
+    "author": "Philip K. Dick",
+    "genre": "Poetry",
+    "price": 51.88,
+    "stockQuantity": 55
+  },
+  {
+    "id": "b-business-15",
+    "title": "Adventures in Dream 15",
+    "author": "Charles Dickens",
+    "genre": "Business",
+    "price": 58.09,
+    "stockQuantity": 76
+  },
+  {
+    "id": "b-mystery-16",
+    "title": "Hidden Journey 16",
+    "author": "George Orwell",
+    "genre": "Mystery",
+    "price": 48.22,
+    "stockQuantity": 42
+  },
+  {
+    "id": "b-science-fiction-17",
+    "title": "Story of Dream 17",
+    "author": "F. Scott Fitzgerald",
+    "genre": "Science Fiction",
+    "price": 11.88,
+    "stockQuantity": 38
+  },
+  {
+    "id": "b-biography-18",
+    "title": "Ancient Mountain 18",
+    "author": "George Orwell",
+    "genre": "Biography",
+    "price": 42.47,
+    "stockQuantity": 61
+  },
+  {
+    "id": "b-poetry-19",
+    "title": "Light of Mystery 19",
+    "author": "William Shakespeare",
+    "genre": "Poetry",
+    "price": 26.31,
+    "stockQuantity": 14
+  },
+  {
+    "id": "b-fantasy-20",
+    "title": "Modern Sky 20",
+    "author": "F. Scott Fitzgerald",
+    "genre": "Fantasy",
+    "price": 16.24,
+    "stockQuantity": 39
+  },
+  {
+    "id": "b-poetry-21",
+    "title": "Modern Reality 21",
+    "author": "Charles Dickens",
+    "genre": "Poetry",
+    "price": 18.17,
+    "stockQuantity": 36
+  },
+  {
+    "id": "b-business-22",
+    "title": "Journey to Heart 22",
+    "author": "Mark Twain",
+    "genre": "Business",
+    "price": 22.49,
+    "stockQuantity": 21
+  },
+  {
+    "id": "b-romance-23",
+    "title": "Journey to Heart 23",
+    "author": "George R.R. Martin",
+    "genre": "Romance",
+    "price": 42.51,
+    "stockQuantity": 35
+  },
+  {
+    "id": "b-poetry-24",
+    "title": "Light of City 24",
+    "author": "Leo Tolstoy",
+    "genre": "Poetry",
+    "price": 39.63,
+    "stockQuantity": 91
+  },
+  {
+    "id": "b-poetry-25",
+    "title": "Modern Mind 25",
+    "author": "Agatha Christie",
+    "genre": "Poetry",
+    "price": 41.89,
+    "stockQuantity": 72
+  },
+  {
+    "id": "b-historical-fiction-26",
+    "title": "The Great Dream 26",
+    "author": "Mark Twain",
+    "genre": "Historical Fiction",
+    "price": 31.53,
+    "stockQuantity": 18
+  },
+  {
+    "id": "b-business-27",
+    "title": "Bright Sky 27",
+    "author": "Mark Twain",
+    "genre": "Business",
+    "price": 31.16,
+    "stockQuantity": 51
+  },
+  {
+    "id": "b-programming-28",
+    "title": "Light of Quest 28",
+    "author": "Agatha Christie",
+    "genre": "Programming",
+    "price": 54.16,
+    "stockQuantity": 68
+  },
+  {
+    "id": "b-fantasy-29",
+    "title": "Mystery of City 29",
+    "author": "Charles Dickens",
+    "genre": "Fantasy",
+    "price": 41.05,
+    "stockQuantity": 56
+  },
+  {
+    "id": "b-biography-30",
+    "title": "Dark Discovery 30",
+    "author": "Dan Brown",
+    "genre": "Biography",
+    "price": 32.94,
+    "stockQuantity": 66
+  },
+  {
+    "id": "b-biography-31",
+    "title": "Hidden Empire 31",
+    "author": "Charles Dickens",
+    "genre": "Biography",
+    "price": 26.54,
+    "stockQuantity": 76
+  },
+  {
+    "id": "b-drama-32",
+    "title": "Story of Heart 32",
+    "author": "F. Scott Fitzgerald",
+    "genre": "Drama",
+    "price": 24.55,
+    "stockQuantity": 97
+  },
+  {
+    "id": "b-poetry-33",
+    "title": "Shadows of Mountain 33",
+    "author": "Ernest Hemingway",
+    "genre": "Poetry",
+    "price": 46.52,
+    "stockQuantity": 54
+  },
+  {
+    "id": "b-mystery-34",
+    "title": "Tales of Mind 34",
+    "author": "Jane Austen",
+    "genre": "Mystery",
+    "price": 11.53,
+    "stockQuantity": 31
+  },
+  {
+    "id": "b-mystery-35",
+    "title": "Future City 35",
+    "author": "Charles Dickens",
+    "genre": "Mystery",
+    "price": 56.67,
+    "stockQuantity": 24
+  },
+  {
+    "id": "b-programming-36",
+    "title": "Tales of Revolution 36",
+    "author": "Dan Brown",
+    "genre": "Programming",
+    "price": 36.75,
+    "stockQuantity": 26
+  },
+  {
+    "id": "b-historical-fiction-37",
+    "title": "Chronicles of Quest 37",
+    "author": "F. Scott Fitzgerald",
+    "genre": "Historical Fiction",
+    "price": 46.67,
+    "stockQuantity": 24
+  },
+  {
+    "id": "b-romance-38",
+    "title": "Hidden Mind 38",
+    "author": "Dan Brown",
+    "genre": "Romance",
+    "price": 58.07,
+    "stockQuantity": 54
+  },
+  {
+    "id": "b-fiction-39",
+    "title": "Dark Soul 39",
+    "author": "J.R.R. Tolkien",
+    "genre": "Fiction",
+    "price": 55.01,
+    "stockQuantity": 25
+  },
+  {
+    "id": "b-programming-40",
+    "title": "Legend of Space 40",
+    "author": "Mark Twain",
+    "genre": "Programming",
+    "price": 41.56,
+    "stockQuantity": 77
+  },
+  {
+    "id": "b-science-fiction-41",
+    "title": "Mystery of Revolution 41",
+    "author": "George Orwell",
+    "genre": "Science Fiction",
+    "price": 23.78,
+    "stockQuantity": 96
+  },
+  {
+    "id": "b-biography-42",
+    "title": "Tales of Kingdom 42",
+    "author": "Jane Austen",
+    "genre": "Biography",
+    "price": 22.73,
+    "stockQuantity": 45
+  },
+  {
+    "id": "b-business-43",
+    "title": "Story of Ocean 43",
+    "author": "F. Scott Fitzgerald",
+    "genre": "Business",
+    "price": 49.88,
+    "stockQuantity": 77
+  },
+  {
+    "id": "b-philosophy-44",
+    "title": "Lost Ocean 44",
+    "author": "Philip K. Dick",
+    "genre": "Philosophy",
+    "price": 57.15,
+    "stockQuantity": 27
+  },
+  {
+    "id": "b-drama-45",
+    "title": "Legend of City 45",
+    "author": "Leo Tolstoy",
+    "genre": "Drama",
+    "price": 45.05,
+    "stockQuantity": 86
+  },
+  {
+    "id": "b-philosophy-46",
+    "title": "Story of Mystery 46",
+    "author": "Arthur C. Clarke",
+    "genre": "Philosophy",
+    "price": 24.5,
+    "stockQuantity": 41
+  },
+  {
+    "id": "b-biography-47",
+    "title": "Dreams of Revolution 47",
+    "author": "Mark Twain",
+    "genre": "Biography",
+    "price": 53.51,
+    "stockQuantity": 81
+  },
+  {
+    "id": "b-self-help-48",
+    "title": "Light of Quest 48",
+    "author": "Charles Dickens",
+    "genre": "Self-Help",
+    "price": 32.06,
+    "stockQuantity": 45
+  },
+  {
+    "id": "b-business-49",
+    "title": "Mystery of Quest 49",
+    "author": "William Shakespeare",
+    "genre": "Business",
+    "price": 37.97,
+    "stockQuantity": 94
+  },
+  {
+    "id": "b-mystery-50",
+    "title": "Story of Sky 50",
+    "author": "Isaac Asimov",
+    "genre": "Mystery",
+    "price": 40.02,
+    "stockQuantity": 42
+  },
+  {
+    "id": "b-thriller-51",
+    "title": "Story of Time 51",
+    "author": "Philip K. Dick",
+    "genre": "Thriller",
+    "price": 45.06,
+    "stockQuantity": 35
+  },
+  {
+    "id": "b-thriller-52",
+    "title": "Shadows of Space 52",
+    "author": "Isaac Asimov",
+    "genre": "Thriller",
+    "price": 14.92,
+    "stockQuantity": 62
+  },
+  {
+    "id": "b-programming-53",
+    "title": "Future Mind 53",
+    "author": "Ernest Hemingway",
+    "genre": "Programming",
+    "price": 59.32,
+    "stockQuantity": 67
+  },
+  {
+    "id": "b-programming-54",
+    "title": "Tales of Journey 54",
+    "author": "Arthur C. Clarke",
+    "genre": "Programming",
+    "price": 11.36,
+    "stockQuantity": 54
+  },
+  {
+    "id": "b-horror-55",
+    "title": "Tales of Soul 55",
+    "author": "J.K. Rowling",
+    "genre": "Horror",
+    "price": 53.04,
+    "stockQuantity": 23
+  },
+  {
+    "id": "b-drama-56",
+    "title": "Tales of Mind 56",
+    "author": "William Shakespeare",
+    "genre": "Drama",
+    "price": 53.8,
+    "stockQuantity": 57
+  },
+  {
+    "id": "b-horror-57",
+    "title": "Bright Revolution 57",
+    "author": "Isaac Asimov",
+    "genre": "Horror",
+    "price": 32,
+    "stockQuantity": 60
+  },
+  {
+    "id": "b-biography-58",
+    "title": "Legend of Adventure 58",
+    "author": "William Shakespeare",
+    "genre": "Biography",
+    "price": 41.78,
+    "stockQuantity": 47
+  },
+  {
+    "id": "b-fantasy-59",
+    "title": "Future Sky 59",
+    "author": "Isaac Asimov",
+    "genre": "Fantasy",
+    "price": 37.62,
+    "stockQuantity": 91
+  },
+  {
+    "id": "b-business-60",
+    "title": "Future World 60",
+    "author": "William Shakespeare",
+    "genre": "Business",
+    "price": 39.83,
+    "stockQuantity": 66
+  },
+  {
+    "id": "b-historical-fiction-61",
+    "title": "Hidden Adventure 61",
+    "author": "George Orwell",
+    "genre": "Historical Fiction",
+    "price": 10.28,
+    "stockQuantity": 74
+  },
+  {
+    "id": "b-science-fiction-62",
+    "title": "Dreams of Adventure 62",
+    "author": "George Orwell",
+    "genre": "Science Fiction",
+    "price": 12.69,
+    "stockQuantity": 18
+  },
+  {
+    "id": "b-poetry-63",
+    "title": "Shadows of Empire 63",
+    "author": "Mark Twain",
+    "genre": "Poetry",
+    "price": 43.75,
+    "stockQuantity": 46
+  },
+  {
+    "id": "b-horror-64",
+    "title": "Lost Adventure 64",
+    "author": "Harper Lee",
+    "genre": "Horror",
+    "price": 13.03,
+    "stockQuantity": 76
+  },
+  {
+    "id": "b-horror-65",
+    "title": "Shadows of Forest 65",
+    "author": "F. Scott Fitzgerald",
+    "genre": "Horror",
+    "price": 29.35,
+    "stockQuantity": 82
+  },
+  {
+    "id": "b-drama-66",
+    "title": "Modern City 66",
+    "author": "Dan Brown",
+    "genre": "Drama",
+    "price": 58.88,
+    "stockQuantity": 59
+  },
+  {
+    "id": "b-self-help-67",
+    "title": "Bright Forest 67",
+    "author": "F. Scott Fitzgerald",
+    "genre": "Self-Help",
+    "price": 48.86,
+    "stockQuantity": 35
+  },
+  {
+    "id": "b-historical-fiction-68",
+    "title": "Adventures in Heart 68",
+    "author": "Agatha Christie",
+    "genre": "Historical Fiction",
+    "price": 29.42,
+    "stockQuantity": 19
+  },
+  {
+    "id": "b-horror-69",
+    "title": "The Great Reality 69",
+    "author": "George R.R. Martin",
+    "genre": "Horror",
+    "price": 29.79,
+    "stockQuantity": 77
+  },
+  {
+    "id": "b-horror-70",
+    "title": "Hidden Heart 70",
+    "author": "F. Scott Fitzgerald",
+    "genre": "Horror",
+    "price": 42.85,
+    "stockQuantity": 31
+  },
+  {
+    "id": "b-self-help-71",
+    "title": "Dreams of Time 71",
+    "author": "George Orwell",
+    "genre": "Self-Help",
+    "price": 50.86,
+    "stockQuantity": 80
+  },
+  {
+    "id": "b-science-fiction-72",
+    "title": "Dreams of Mind 72",
+    "author": "Ernest Hemingway",
+    "genre": "Science Fiction",
+    "price": 23.35,
+    "stockQuantity": 97
+  },
+  {
+    "id": "b-poetry-73",
+    "title": "Mystery of Quest 73",
+    "author": "J.K. Rowling",
+    "genre": "Poetry",
+    "price": 24.3,
+    "stockQuantity": 41
+  },
+  {
+    "id": "b-philosophy-74",
+    "title": "Light of Space 74",
+    "author": "Stephen King",
+    "genre": "Philosophy",
+    "price": 31.73,
+    "stockQuantity": 28
+  },
+  {
+    "id": "b-thriller-75",
+    "title": "Hidden Forest 75",
+    "author": "J.K. Rowling",
+    "genre": "Thriller",
+    "price": 16.75,
+    "stockQuantity": 99
+  },
+  {
+    "id": "b-thriller-76",
+    "title": "Past Discovery 76",
+    "author": "George Orwell",
+    "genre": "Thriller",
+    "price": 54.03,
+    "stockQuantity": 78
+  },
+  {
+    "id": "b-historical-fiction-77",
+    "title": "Dark Truth 77",
+    "author": "George R.R. Martin",
+    "genre": "Historical Fiction",
+    "price": 41.28,
+    "stockQuantity": 59
+  },
+  {
+    "id": "b-fantasy-78",
+    "title": "Light of Time 78",
+    "author": "Charles Dickens",
+    "genre": "Fantasy",
+    "price": 52.62,
+    "stockQuantity": 30
+  },
+  {
+    "id": "b-historical-fiction-79",
+    "title": "Ancient Mountain 79",
+    "author": "Mark Twain",
+    "genre": "Historical Fiction",
+    "price": 43.12,
+    "stockQuantity": 53
+  },
+  {
+    "id": "b-biography-80",
+    "title": "Secret Mind 80",
+    "author": "Ernest Hemingway",
+    "genre": "Biography",
+    "price": 38.43,
+    "stockQuantity": 71
+  },
+  {
+    "id": "b-business-81",
+    "title": "Hidden Adventure 81",
+    "author": "George R.R. Martin",
+    "genre": "Business",
+    "price": 49.28,
+    "stockQuantity": 13
+  },
+  {
+    "id": "b-poetry-82",
+    "title": "The Great Ocean 82",
+    "author": "Isaac Asimov",
+    "genre": "Poetry",
+    "price": 43.84,
+    "stockQuantity": 19
+  },
+  {
+    "id": "b-poetry-83",
+    "title": "Journey to Mind 83",
+    "author": "Stephen King",
+    "genre": "Poetry",
+    "price": 35.18,
+    "stockQuantity": 80
+  },
+  {
+    "id": "b-fantasy-84",
+    "title": "Light of Discovery 84",
+    "author": "Agatha Christie",
+    "genre": "Fantasy",
+    "price": 35.49,
+    "stockQuantity": 40
+  },
+  {
+    "id": "b-historical-fiction-85",
+    "title": "Chronicles of Time 85",
+    "author": "Mark Twain",
+    "genre": "Historical Fiction",
+    "price": 57.99,
+    "stockQuantity": 89
+  },
+  {
+    "id": "b-thriller-86",
+    "title": "Modern Mystery 86",
+    "author": "Philip K. Dick",
+    "genre": "Thriller",
+    "price": 35.59,
+    "stockQuantity": 89
+  },
+  {
+    "id": "b-programming-87",
+    "title": "Dreams of Dream 87",
+    "author": "Harper Lee",
+    "genre": "Programming",
+    "price": 17.4,
+    "stockQuantity": 83
+  },
+  {
+    "id": "b-fantasy-88",
+    "title": "Bright Discovery 88",
+    "author": "William Shakespeare",
+    "genre": "Fantasy",
+    "price": 19.6,
+    "stockQuantity": 34
+  },
+  {
+    "id": "b-programming-89",
+    "title": "Secret Time 89",
+    "author": "George Orwell",
+    "genre": "Programming",
+    "price": 44.73,
+    "stockQuantity": 10
+  },
+  {
+    "id": "b-business-90",
+    "title": "Story of Reality 90",
+    "author": "Isaac Asimov",
+    "genre": "Business",
+    "price": 50,
+    "stockQuantity": 43
+  },
+  {
+    "id": "b-fantasy-91",
+    "title": "Legend of Dream 91",
+    "author": "Leo Tolstoy",
+    "genre": "Fantasy",
+    "price": 45.17,
+    "stockQuantity": 23
+  },
+  {
+    "id": "b-poetry-92",
+    "title": "Hidden Discovery 92",
+    "author": "Charles Dickens",
+    "genre": "Poetry",
+    "price": 44.28,
+    "stockQuantity": 42
+  },
+  {
+    "id": "b-philosophy-93",
+    "title": "Shadows of Mountain 93",
+    "author": "George R.R. Martin",
+    "genre": "Philosophy",
+    "price": 31.62,
+    "stockQuantity": 76
+  },
+  {
+    "id": "b-horror-94",
+    "title": "Tales of Empire 94",
+    "author": "J.R.R. Tolkien",
+    "genre": "Horror",
+    "price": 17.37,
+    "stockQuantity": 71
+  },
+  {
+    "id": "b-programming-95",
+    "title": "Shadows of Forest 95",
+    "author": "Philip K. Dick",
+    "genre": "Programming",
+    "price": 31.05,
+    "stockQuantity": 88
+  },
+  {
+    "id": "b-mystery-96",
+    "title": "Adventures in Quest 96",
+    "author": "Mark Twain",
+    "genre": "Mystery",
+    "price": 56.14,
+    "stockQuantity": 20
+  },
+  {
+    "id": "b-fiction-97",
+    "title": "Ancient Ocean 97",
+    "author": "Harper Lee",
+    "genre": "Fiction",
+    "price": 26.33,
+    "stockQuantity": 66
+  },
+  {
+    "id": "b-horror-98",
+    "title": "Dreams of City 98",
+    "author": "Dan Brown",
+    "genre": "Horror",
+    "price": 55.61,
+    "stockQuantity": 76
+  },
+  {
+    "id": "b-biography-99",
+    "title": "Adventures in Journey 99",
+    "author": "Isaac Asimov",
+    "genre": "Biography",
+    "price": 59.3,
+    "stockQuantity": 15
+  },
+  {
+    "id": "b-business-100",
+    "title": "The Great Heart 100",
+    "author": "Charles Dickens",
+    "genre": "Business",
+    "price": 10.39,
+    "stockQuantity": 85
+  },
+  {
+    "id": "b-biography-101",
+    "title": "Past Time 101",
+    "author": "Agatha Christie",
+    "genre": "Biography",
+    "price": 30.13,
+    "stockQuantity": 24
+  },
+  {
+    "id": "b-historical-fiction-102",
+    "title": "Ancient Ocean 102",
+    "author": "Leo Tolstoy",
+    "genre": "Historical Fiction",
+    "price": 38.49,
+    "stockQuantity": 84
+  },
+  {
+    "id": "b-romance-103",
+    "title": "Light of Revolution 103",
+    "author": "Dan Brown",
+    "genre": "Romance",
+    "price": 42.93,
+    "stockQuantity": 14
+  },
+  {
+    "id": "b-historical-fiction-104",
+    "title": "Light of Time 104",
+    "author": "Philip K. Dick",
+    "genre": "Historical Fiction",
+    "price": 57.61,
+    "stockQuantity": 43
+  },
+  {
+    "id": "b-philosophy-105",
+    "title": "Story of Quest 105",
+    "author": "Isaac Asimov",
+    "genre": "Philosophy",
+    "price": 39.42,
+    "stockQuantity": 4
+  },
+  {
+    "id": "b-historical-fiction-106",
+    "title": "Dark Revolution 106",
+    "author": "Ernest Hemingway",
+    "genre": "Historical Fiction",
+    "price": 17.95,
+    "stockQuantity": 72
+  },
+  {
+    "id": "b-fantasy-107",
+    "title": "Modern City 107",
+    "author": "Leo Tolstoy",
+    "genre": "Fantasy",
+    "price": 26.16,
+    "stockQuantity": 80
+  },
+  {
+    "id": "b-fantasy-108",
+    "title": "Shadows of Ocean 108",
+    "author": "Jane Austen",
+    "genre": "Fantasy",
+    "price": 35.46,
+    "stockQuantity": 66
+  },
+  {
+    "id": "b-business-109",
+    "title": "Hidden Empire 109",
+    "author": "Stephen King",
+    "genre": "Business",
+    "price": 53.57,
+    "stockQuantity": 3
+  },
+  {
+    "id": "b-self-help-110",
+    "title": "Bright Quest 110",
+    "author": "Charles Dickens",
+    "genre": "Self-Help",
+    "price": 26.39,
+    "stockQuantity": 60
+  },
+  {
+    "id": "b-drama-111",
+    "title": "Secret Space 111",
+    "author": "J.K. Rowling",
+    "genre": "Drama",
+    "price": 58.58,
+    "stockQuantity": 32
+  },
+  {
+    "id": "b-historical-fiction-112",
+    "title": "Chronicles of Truth 112",
+    "author": "Agatha Christie",
+    "genre": "Historical Fiction",
+    "price": 52.48,
+    "stockQuantity": 80
+  },
+  {
+    "id": "b-business-113",
+    "title": "Secret Adventure 113",
+    "author": "J.R.R. Tolkien",
+    "genre": "Business",
+    "price": 37.85,
+    "stockQuantity": 37
+  },
+  {
+    "id": "b-business-114",
+    "title": "Secret City 114",
+    "author": "Isaac Asimov",
+    "genre": "Business",
+    "price": 14.28,
+    "stockQuantity": 20
+  },
+  {
+    "id": "b-mystery-115",
+    "title": "Story of World 115",
+    "author": "Arthur C. Clarke",
+    "genre": "Mystery",
+    "price": 45.18,
+    "stockQuantity": 75
+  },
+  {
+    "id": "b-poetry-116",
+    "title": "Dreams of Heart 116",
+    "author": "George Orwell",
+    "genre": "Poetry",
+    "price": 25.33,
+    "stockQuantity": 56
+  },
+  {
+    "id": "b-fiction-117",
+    "title": "Legend of Quest 117",
+    "author": "F. Scott Fitzgerald",
+    "genre": "Fiction",
+    "price": 58.66,
+    "stockQuantity": 93
+  },
+  {
+    "id": "b-poetry-118",
+    "title": "Lost Mountain 118",
+    "author": "Stephen King",
+    "genre": "Poetry",
+    "price": 48.89,
+    "stockQuantity": 6
+  },
+  {
+    "id": "b-drama-119",
+    "title": "Secret Revolution 119",
+    "author": "George Orwell",
+    "genre": "Drama",
+    "price": 20.11,
+    "stockQuantity": 94
+  },
+  {
+    "id": "b-self-help-120",
+    "title": "Modern Dream 120",
+    "author": "Mark Twain",
+    "genre": "Self-Help",
+    "price": 43.46,
+    "stockQuantity": 15
+  },
+  {
+    "id": "b-programming-121",
+    "title": "Hidden Ocean 121",
+    "author": "Dan Brown",
+    "genre": "Programming",
+    "price": 53.43,
+    "stockQuantity": 51
+  },
+  {
+    "id": "b-biography-122",
+    "title": "Lost Forest 122",
+    "author": "Harper Lee",
+    "genre": "Biography",
+    "price": 57.97,
+    "stockQuantity": 28
+  },
+  {
+    "id": "b-drama-123",
+    "title": "Journey to Space 123",
+    "author": "Arthur C. Clarke",
+    "genre": "Drama",
+    "price": 22,
+    "stockQuantity": 72
+  },
+  {
+    "id": "b-philosophy-124",
+    "title": "Mystery of Discovery 124",
+    "author": "Arthur C. Clarke",
+    "genre": "Philosophy",
+    "price": 27.92,
+    "stockQuantity": 19
+  },
+  {
+    "id": "b-business-125",
+    "title": "Bright Reality 125",
+    "author": "Dan Brown",
+    "genre": "Business",
+    "price": 25.68,
+    "stockQuantity": 6
+  },
+  {
+    "id": "b-historical-fiction-126",
+    "title": "Journey to Mystery 126",
+    "author": "Isaac Asimov",
+    "genre": "Historical Fiction",
+    "price": 21.41,
+    "stockQuantity": 10
+  },
+  {
+    "id": "b-business-127",
+    "title": "Dreams of World 127",
+    "author": "George Orwell",
+    "genre": "Business",
+    "price": 46.09,
+    "stockQuantity": 14
+  },
+  {
+    "id": "b-fiction-128",
+    "title": "Dark Kingdom 128",
+    "author": "J.K. Rowling",
+    "genre": "Fiction",
+    "price": 29.8,
+    "stockQuantity": 92
+  },
+  {
+    "id": "b-drama-129",
+    "title": "Chronicles of World 129",
+    "author": "F. Scott Fitzgerald",
+    "genre": "Drama",
+    "price": 53.76,
+    "stockQuantity": 16
+  },
+  {
+    "id": "b-fiction-130",
+    "title": "Secret City 130",
+    "author": "Ernest Hemingway",
+    "genre": "Fiction",
+    "price": 50.73,
+    "stockQuantity": 9
+  },
+  {
+    "id": "b-business-131",
+    "title": "Tales of Time 131",
+    "author": "Agatha Christie",
+    "genre": "Business",
+    "price": 50.15,
+    "stockQuantity": 57
+  },
+  {
+    "id": "b-philosophy-132",
+    "title": "The Great Truth 132",
+    "author": "William Shakespeare",
+    "genre": "Philosophy",
+    "price": 42.42,
+    "stockQuantity": 75
+  },
+  {
+    "id": "b-drama-133",
+    "title": "Tales of Sky 133",
+    "author": "Arthur C. Clarke",
+    "genre": "Drama",
+    "price": 15.51,
+    "stockQuantity": 1
+  },
+  {
+    "id": "b-poetry-134",
+    "title": "Future Dream 134",
+    "author": "George R.R. Martin",
+    "genre": "Poetry",
+    "price": 38.5,
+    "stockQuantity": 44
+  },
+  {
+    "id": "b-philosophy-135",
+    "title": "Hidden Mystery 135",
+    "author": "Jane Austen",
+    "genre": "Philosophy",
+    "price": 15.63,
+    "stockQuantity": 40
+  },
+  {
+    "id": "b-historical-fiction-136",
+    "title": "Journey to World 136",
+    "author": "Isaac Asimov",
+    "genre": "Historical Fiction",
+    "price": 26.79,
+    "stockQuantity": 47
+  },
+  {
+    "id": "b-self-help-137",
+    "title": "Secret Mountain 137",
+    "author": "George Orwell",
+    "genre": "Self-Help",
+    "price": 14.73,
+    "stockQuantity": 3
+  },
+  {
+    "id": "b-romance-138",
+    "title": "Dreams of Mountain 138",
+    "author": "F. Scott Fitzgerald",
+    "genre": "Romance",
+    "price": 58.74,
+    "stockQuantity": 45
+  },
+  {
+    "id": "b-thriller-139",
+    "title": "Legend of Kingdom 139",
+    "author": "Arthur C. Clarke",
+    "genre": "Thriller",
+    "price": 59.77,
+    "stockQuantity": 62
+  },
+  {
+    "id": "b-biography-140",
+    "title": "Mystery of Heart 140",
+    "author": "Leo Tolstoy",
+    "genre": "Biography",
+    "price": 23.18,
+    "stockQuantity": 36
+  },
+  {
+    "id": "b-science-fiction-141",
+    "title": "Dark Forest 141",
+    "author": "Mark Twain",
+    "genre": "Science Fiction",
+    "price": 50.75,
+    "stockQuantity": 83
+  },
+  {
+    "id": "b-programming-142",
+    "title": "Journey to Revolution 142",
+    "author": "Dan Brown",
+    "genre": "Programming",
+    "price": 55.67,
+    "stockQuantity": 84
+  },
+  {
+    "id": "b-business-143",
+    "title": "Journey to Reality 143",
+    "author": "Jane Austen",
+    "genre": "Business",
+    "price": 30.02,
+    "stockQuantity": 31
+  },
+  {
+    "id": "b-fantasy-144",
+    "title": "Chronicles of City 144",
+    "author": "Philip K. Dick",
+    "genre": "Fantasy",
+    "price": 51.1,
+    "stockQuantity": 22
+  },
+  {
+    "id": "b-drama-145",
+    "title": "Story of Mystery 145",
+    "author": "George R.R. Martin",
+    "genre": "Drama",
+    "price": 12.95,
+    "stockQuantity": 40
+  },
+  {
+    "id": "b-historical-fiction-146",
+    "title": "Bright Mountain 146",
+    "author": "Dan Brown",
+    "genre": "Historical Fiction",
+    "price": 35.99,
+    "stockQuantity": 30
+  },
+  {
+    "id": "b-philosophy-147",
+    "title": "Mystery of Soul 147",
+    "author": "Arthur C. Clarke",
+    "genre": "Philosophy",
+    "price": 54.16,
+    "stockQuantity": 90
+  },
+  {
+    "id": "b-programming-148",
+    "title": "Dark Revolution 148",
+    "author": "Isaac Asimov",
+    "genre": "Programming",
+    "price": 41.89,
+    "stockQuantity": 45
+  },
+  {
+    "id": "b-self-help-149",
+    "title": "Dark Sky 149",
+    "author": "F. Scott Fitzgerald",
+    "genre": "Self-Help",
+    "price": 53.92,
+    "stockQuantity": 17
+  },
+  {
+    "id": "b-science-fiction-150",
+    "title": "Tales of Time 150",
+    "author": "William Shakespeare",
+    "genre": "Science Fiction",
+    "price": 22.73,
+    "stockQuantity": 86
+  },
+  {
+    "id": "b-philosophy-151",
+    "title": "Light of Truth 151",
+    "author": "Stephen King",
+    "genre": "Philosophy",
+    "price": 57.6,
+    "stockQuantity": 88
+  },
+  {
+    "id": "b-fantasy-152",
+    "title": "Adventures in Ocean 152",
+    "author": "Jane Austen",
+    "genre": "Fantasy",
+    "price": 59.81,
+    "stockQuantity": 87
+  },
+  {
+    "id": "b-self-help-153",
+    "title": "Story of Ocean 153",
+    "author": "J.R.R. Tolkien",
+    "genre": "Self-Help",
+    "price": 53.29,
+    "stockQuantity": 77
+  },
+  {
+    "id": "b-poetry-154",
+    "title": "Hidden Mind 154",
+    "author": "Stephen King",
+    "genre": "Poetry",
+    "price": 23.32,
+    "stockQuantity": 66
+  },
+  {
+    "id": "b-drama-155",
+    "title": "Story of Ocean 155",
+    "author": "Ernest Hemingway",
+    "genre": "Drama",
+    "price": 26.63,
+    "stockQuantity": 64
+  },
+  {
+    "id": "b-drama-156",
+    "title": "Secret Soul 156",
+    "author": "Philip K. Dick",
+    "genre": "Drama",
+    "price": 23.89,
+    "stockQuantity": 70
+  },
+  {
+    "id": "b-biography-157",
+    "title": "Dark Adventure 157",
+    "author": "George Orwell",
+    "genre": "Biography",
+    "price": 20.39,
+    "stockQuantity": 22
+  },
+  {
+    "id": "b-drama-158",
+    "title": "Chronicles of Mind 158",
+    "author": "Harper Lee",
+    "genre": "Drama",
+    "price": 17.61,
+    "stockQuantity": 13
+  },
+  {
+    "id": "b-horror-159",
+    "title": "Past Truth 159",
+    "author": "Agatha Christie",
+    "genre": "Horror",
+    "price": 22.23,
+    "stockQuantity": 16
+  },
+  {
+    "id": "b-biography-160",
+    "title": "Hidden Sky 160",
+    "author": "Isaac Asimov",
+    "genre": "Biography",
+    "price": 35.24,
+    "stockQuantity": 27
+  },
+  {
+    "id": "b-fiction-161",
+    "title": "Adventures in Quest 161",
+    "author": "Philip K. Dick",
+    "genre": "Fiction",
+    "price": 51.16,
+    "stockQuantity": 14
+  },
+  {
+    "id": "b-historical-fiction-162",
+    "title": "Tales of City 162",
+    "author": "George R.R. Martin",
+    "genre": "Historical Fiction",
+    "price": 11.39,
+    "stockQuantity": 23
+  },
+  {
+    "id": "b-biography-163",
+    "title": "Story of Soul 163",
+    "author": "Arthur C. Clarke",
+    "genre": "Biography",
+    "price": 16.54,
+    "stockQuantity": 28
+  },
+  {
+    "id": "b-mystery-164",
+    "title": "Lost World 164",
+    "author": "Isaac Asimov",
+    "genre": "Mystery",
+    "price": 22.88,
+    "stockQuantity": 78
+  },
+  {
+    "id": "b-drama-165",
+    "title": "Secret Space 165",
+    "author": "Leo Tolstoy",
+    "genre": "Drama",
+    "price": 39.44,
+    "stockQuantity": 23
+  },
+  {
+    "id": "b-fantasy-166",
+    "title": "Hidden Mystery 166",
+    "author": "Mark Twain",
+    "genre": "Fantasy",
+    "price": 29.75,
+    "stockQuantity": 86
+  },
+  {
+    "id": "b-business-167",
+    "title": "Story of Forest 167",
+    "author": "Isaac Asimov",
+    "genre": "Business",
+    "price": 44.87,
+    "stockQuantity": 53
+  },
+  {
+    "id": "b-horror-168",
+    "title": "Light of Time 168",
+    "author": "William Shakespeare",
+    "genre": "Horror",
+    "price": 41.35,
+    "stockQuantity": 11
+  },
+  {
+    "id": "b-self-help-169",
+    "title": "Future Reality 169",
+    "author": "George Orwell",
+    "genre": "Self-Help",
+    "price": 13.24,
+    "stockQuantity": 65
+  },
+  {
+    "id": "b-poetry-170",
+    "title": "Hidden Mystery 170",
+    "author": "Dan Brown",
+    "genre": "Poetry",
+    "price": 42.44,
+    "stockQuantity": 60
+  },
+  {
+    "id": "b-horror-171",
+    "title": "Hidden Reality 171",
+    "author": "Mark Twain",
+    "genre": "Horror",
+    "price": 25.48,
+    "stockQuantity": 65
+  },
+  {
+    "id": "b-philosophy-172",
+    "title": "Ancient Empire 172",
+    "author": "Charles Dickens",
+    "genre": "Philosophy",
+    "price": 16.75,
+    "stockQuantity": 28
+  },
+  {
+    "id": "b-business-173",
+    "title": "Future Forest 173",
+    "author": "J.K. Rowling",
+    "genre": "Business",
+    "price": 32.28,
+    "stockQuantity": 54
+  },
+  {
+    "id": "b-self-help-174",
+    "title": "Story of Journey 174",
+    "author": "J.R.R. Tolkien",
+    "genre": "Self-Help",
+    "price": 48.29,
+    "stockQuantity": 90
+  },
+  {
+    "id": "b-science-fiction-175",
+    "title": "Legend of Kingdom 175",
+    "author": "Dan Brown",
+    "genre": "Science Fiction",
+    "price": 18.69,
+    "stockQuantity": 11
+  },
+  {
+    "id": "b-self-help-176",
+    "title": "Story of World 176",
+    "author": "Leo Tolstoy",
+    "genre": "Self-Help",
+    "price": 39.03,
+    "stockQuantity": 4
+  },
+  {
+    "id": "b-fiction-177",
+    "title": "Secret Mountain 177",
+    "author": "Dan Brown",
+    "genre": "Fiction",
+    "price": 28.9,
+    "stockQuantity": 0
+  },
+  {
+    "id": "b-horror-178",
+    "title": "Past Kingdom 178",
+    "author": "J.R.R. Tolkien",
+    "genre": "Horror",
+    "price": 14.43,
+    "stockQuantity": 49
+  },
+  {
+    "id": "b-historical-fiction-179",
+    "title": "Light of Adventure 179",
+    "author": "Philip K. Dick",
+    "genre": "Historical Fiction",
+    "price": 31.79,
+    "stockQuantity": 4
+  },
+  {
+    "id": "b-romance-180",
+    "title": "Journey to Dream 180",
+    "author": "Dan Brown",
+    "genre": "Romance",
+    "price": 50.45,
+    "stockQuantity": 21
+  },
+  {
+    "id": "b-poetry-181",
+    "title": "Dreams of City 181",
+    "author": "Agatha Christie",
+    "genre": "Poetry",
+    "price": 22.08,
+    "stockQuantity": 81
+  },
+  {
+    "id": "b-self-help-182",
+    "title": "Past Revolution 182",
+    "author": "Charles Dickens",
+    "genre": "Self-Help",
+    "price": 17.71,
+    "stockQuantity": 52
+  },
+  {
+    "id": "b-fantasy-183",
+    "title": "Past Truth 183",
+    "author": "William Shakespeare",
+    "genre": "Fantasy",
+    "price": 38.35,
+    "stockQuantity": 5
+  },
+  {
+    "id": "b-biography-184",
+    "title": "Lost Heart 184",
+    "author": "Philip K. Dick",
+    "genre": "Biography",
+    "price": 33.86,
+    "stockQuantity": 8
+  },
+  {
+    "id": "b-drama-185",
+    "title": "Adventures in Truth 185",
+    "author": "Leo Tolstoy",
+    "genre": "Drama",
+    "price": 57.1,
+    "stockQuantity": 25
+  },
+  {
+    "id": "b-horror-186",
+    "title": "The Great Mind 186",
+    "author": "Jane Austen",
+    "genre": "Horror",
+    "price": 55.72,
+    "stockQuantity": 99
+  },
+  {
+    "id": "b-fantasy-187",
+    "title": "Adventures in Space 187",
+    "author": "Isaac Asimov",
+    "genre": "Fantasy",
+    "price": 51.68,
+    "stockQuantity": 52
+  },
+  {
+    "id": "b-thriller-188",
+    "title": "Lost Mountain 188",
+    "author": "J.R.R. Tolkien",
+    "genre": "Thriller",
+    "price": 33.83,
+    "stockQuantity": 18
+  },
+  {
+    "id": "b-programming-189",
+    "title": "Dark Empire 189",
+    "author": "Mark Twain",
+    "genre": "Programming",
+    "price": 23.27,
+    "stockQuantity": 74
+  },
+  {
+    "id": "b-fiction-190",
+    "title": "Journey to Mountain 190",
+    "author": "Mark Twain",
+    "genre": "Fiction",
+    "price": 56.81,
+    "stockQuantity": 17
+  },
+  {
+    "id": "b-horror-191",
+    "title": "Future Revolution 191",
+    "author": "Mark Twain",
+    "genre": "Horror",
+    "price": 33.02,
+    "stockQuantity": 21
+  },
+  {
+    "id": "b-fantasy-192",
+    "title": "Journey to Ocean 192",
+    "author": "George Orwell",
+    "genre": "Fantasy",
+    "price": 11.85,
+    "stockQuantity": 88
+  },
+  {
+    "id": "b-biography-193",
+    "title": "Past Quest 193",
+    "author": "F. Scott Fitzgerald",
+    "genre": "Biography",
+    "price": 42.97,
+    "stockQuantity": 37
+  },
+  {
+    "id": "b-science-fiction-194",
+    "title": "Story of World 194",
+    "author": "F. Scott Fitzgerald",
+    "genre": "Science Fiction",
+    "price": 10.2,
+    "stockQuantity": 3
+  },
+  {
+    "id": "b-programming-195",
+    "title": "Lost Discovery 195",
+    "author": "Charles Dickens",
+    "genre": "Programming",
+    "price": 43.75,
+    "stockQuantity": 93
+  },
+  {
+    "id": "b-self-help-196",
+    "title": "Lost Adventure 196",
+    "author": "Charles Dickens",
+    "genre": "Self-Help",
+    "price": 16.02,
+    "stockQuantity": 4
+  },
+  {
+    "id": "b-historical-fiction-197",
+    "title": "Light of Adventure 197",
+    "author": "Harper Lee",
+    "genre": "Historical Fiction",
+    "price": 44.86,
+    "stockQuantity": 56
+  },
+  {
+    "id": "b-business-198",
+    "title": "Dark Truth 198",
+    "author": "Mark Twain",
+    "genre": "Business",
+    "price": 16.44,
+    "stockQuantity": 98
+  },
+  {
+    "id": "b-fantasy-199",
+    "title": "Shadows of Soul 199",
+    "author": "Dan Brown",
+    "genre": "Fantasy",
+    "price": 35.27,
+    "stockQuantity": 87
+  },
+  {
+    "id": "b-programming-200",
+    "title": "Hidden Truth 200",
+    "author": "J.K. Rowling",
+    "genre": "Programming",
+    "price": 45.56,
+    "stockQuantity": 10
+  }
+]
