@@ -1,234 +1,261 @@
-import { useState, useEffect } from 'react'; 
-import { Container, Grid, TextField, Box, Typography, Button, InputAdornment, Alert, Card, CardContent, CardActions, Chip } from '@mui/material'; 
-import { Search, ShoppingCart } from '@mui/icons-material'; 
-import { api } from '../../api'; 
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { 
+  Container, 
+  Grid, 
+  TextField, 
+  Box,
+  Typography,
+  Button,
+  InputAdornment,
+  Alert,
+  Pagination,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Stack,
+  Paper
+} from '@mui/material';
+import { Search } from '@mui/icons-material';
+import { api } from '../../api';
 import BookCardSkeleton from './BookCardSkeleton';
+import BookCard from './BookCard';
 
 export default function Catalog({ addToCart, allBooks, user, loading }) {
-const [q, setQ] = useState('');
-const [books, setBooks] = useState([]);
-const [err, setErr] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
+  
+  const [q, setQ] = useState(searchParams.get('q') || '');
+  const [books, setBooks] = useState([]);
+  const [err, setErr] = useState('');
+  
+  const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get('page')) || 1);
+  const [itemsPerPage, setItemsPerPage] = useState(parseInt(searchParams.get('perPage')) || 12);
+  const [sortBy, setSortBy] = useState(searchParams.get('sort') || 'title');
+  const [filterGenre, setFilterGenre] = useState(searchParams.get('genre') || 'all');
 
-const load = async () => {
-try {
-const data = q ? await api.searchBooks(q) : allBooks;
-setBooks(data);
-setErr('');
-} catch (e) {
-setErr(e.message);
-}
-};
+  const genres = ['all', ...new Set(allBooks.map(b => b.genre).filter(Boolean))];
+  
+  const load = async () => {
+    try {
+      const data = q ? await api.searchBooks(q) : allBooks;
+      setBooks(data);
+      setErr('');
+    } catch (e) { 
+      setErr(e.message);
+    }
+  };
+  
+  useEffect(() => { 
+    if (!loading) {
+      load();
+    }
+  }, [allBooks, loading]);
+  
+  const handleSearch = () => {
+    setCurrentPage(1);
+    load();
+  };
 
-useEffect(() => {
-if (!loading) {
-load();
-}
-}, [allBooks, loading]);
+  const filteredAndSortedBooks = books
+    .filter(book => filterGenre === 'all' || book.genre === filterGenre)
+    .sort((a, b) => {
+      switch (sortBy) {
+        case 'price-low':
+          return (a.price || 0) - (b.price || 0);
+        case 'price-high':
+          return (b.price || 0) - (a.price || 0);
+        case 'stock':
+          return (b.stockQuantity || 0) - (a.stockQuantity || 0);
+        case 'author':
+          return (a.author || '').localeCompare(b.author || '');
+        case 'title':
+        default:
+          return (a.title || '').localeCompare(b.title || '');
+      }
+    });
 
-const handleSearch = () => {
-load();
-};
+  const totalPages = Math.ceil(filteredAndSortedBooks.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentBooks = filteredAndSortedBooks.slice(startIndex, endIndex);
 
-// Helper function to determine if stock should be shown
-const shouldShowStock = (book, isAdmin) => {
-const stock = book.stockQuantity ?? 0;
-return isAdmin || stock < 5;
-};
+  const updateURL = () => {
+    const params = {};
+    if (q) params.q = q;
+    if (currentPage > 1) params.page = currentPage;
+    if (itemsPerPage !== 12) params.perPage = itemsPerPage;
+    if (sortBy !== 'title') params.sort = sortBy;
+    if (filterGenre !== 'all') params.genre = filterGenre;
+    setSearchParams(params);
+  };
 
-return (
-<Container maxWidth="xl" sx={{ py: 4 }}>
-{/* Header */}
-<Box sx={{ mb: 4 }}>
-<Typography variant="h3" gutterBottom fontWeight="bold">
-📚 Books Catalog
-</Typography>
-<Typography variant="body1" color="text.secondary">
-{loading ? 'Loading books...' : `${books.length} books available`}
-</Typography>
-</Box>
+  useEffect(() => {
+    updateURL();
+  }, [currentPage, itemsPerPage, sortBy, filterGenre]);
 
-  {/* Search Bar */}
-  <Box sx={{ mb: 4, display: 'flex', gap: 2 }}>
-    <TextField
-      fullWidth
-      placeholder="Search by title or author..."
-      value={q}
-      onChange={(e) => setQ(e.target.value)}
-      onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-      InputProps={{
-        startAdornment: (
-          <InputAdornment position="start">
-            <Search />
-          </InputAdornment>
-        ),
-      }}
-    />
-    <Button 
-      variant="contained" 
-      onClick={handleSearch}
-      sx={{ minWidth: 120 }}
-    >
-      Search
-    </Button>
-  </Box>
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
-  {/* Error message */}
-  {err && <Alert severity="error" sx={{ mb: 3 }}>{err}</Alert>}
+  const handleItemsPerPageChange = (event) => {
+    setItemsPerPage(event.target.value);
+    setCurrentPage(1);
+  };
 
-  {/* Books Grid */}
-  <Grid container spacing={3}>
-    {loading ? (
-      // Show skeleton loading cards
-      Array.from({ length: 8 }).map((_, index) => (
-        <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-          <BookCardSkeleton />
-        </Grid>
-      ))
-    ) : books.length === 0 ? (
-      // No books found
-      <Grid item xs={12}>
-        <Alert severity="info">No books found</Alert>
-      </Grid>
-    ) : (
-      // Show actual books
-      books.map(b => {
-        const stock = b.stockQuantity ?? 0;
-        const isOutOfStock = stock <= 0;
-        const isLowStock = stock < 5 && stock > 0;
-        const showStock = shouldShowStock(b, user?.isAdmin);
-        
-        return (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={b.id}>
-            <Card sx={{ 
-              height: '100%', 
-              display: 'flex', 
-              flexDirection: 'column',
-              transition: 'transform 0.2s, box-shadow 0.2s',
-              '&:hover': {
-                transform: 'translateY(-4px)',
-                boxShadow: 4,
-              }
-            }}>
-              {/* Book Cover */}
-              <Box
-                sx={{
-                  height: 200,
-                  background: `linear-gradient(135deg, #667eea 0%, #764ba2 100%)`,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  p: 2,
-                  position: 'relative'
+  const handleDeleteBook = async (book) => {
+    if (!confirm(`Delete "${book.title}"?`)) return;
+    try {
+      await api.deleteBookById(book.id);
+      await load();
+      if (loadBooks) loadBooks();
+    } catch (e) {
+      alert(e.message);
+    }
+  };
+  
+  return (
+    <Container maxWidth="xl" sx={{ py: 4 }}>
+      <Box sx={{ mb: 4 }}>
+        <Typography variant="h3" gutterBottom fontWeight="bold">
+          📚 Book Catalog
+        </Typography>
+        <Typography variant="body1" color="text.secondary">
+          {loading ? 'Loading books...' : `${filteredAndSortedBooks.length} books available`}
+        </Typography>
+      </Box>
+
+      <Paper sx={{ p: 3, mb: 4 }}>
+        <Grid container spacing={2} alignItems="center">
+          <Grid item xs={12} md={6}>
+            <TextField
+              fullWidth
+              placeholder="Search by title or author..."
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={2}>
+            <Button fullWidth variant="contained" onClick={handleSearch}>
+              Search
+            </Button>
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={2}>
+            <FormControl fullWidth>
+              <InputLabel>Genre</InputLabel>
+              <Select
+                value={filterGenre}
+                label="Genre"
+                onChange={(e) => {
+                  setFilterGenre(e.target.value);
+                  setCurrentPage(1);
                 }}
               >
-                {/* Stock badge - only show if needed */}
-                {showStock && isLowStock && (
-                  <Chip
-                    label={`Only ${stock} left!`}
-                    color="error"
-                    size="small"
-                    sx={{ 
-                      position: 'absolute', 
-                      top: 8, 
-                      right: 8,
-                      fontWeight: 'bold'
-                    }}
-                  />
-                )}
-                {isOutOfStock && (
-                  <Chip
-                    label="Out of Stock"
-                    color="error"
-                    size="small"
-                    sx={{ 
-                      position: 'absolute', 
-                      top: 8, 
-                      right: 8,
-                      fontWeight: 'bold'
-                    }}
-                  />
-                )}
-                
-                <Typography 
-                  variant="h6" 
-                  sx={{ 
-                    color: 'white', 
-                    textAlign: 'center',
-                    fontWeight: 700,
-                    textShadow: '0 2px 4px rgba(0,0,0,0.3)'
-                  }}
-                >
-                  {b.title}
-                </Typography>
-              </Box>
-
-              <CardContent sx={{ flexGrow: 1 }}>
-                <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                  by {b.author}
-                </Typography>
-                
-                <Box sx={{ my: 1 }}>
-                  <Chip label={b.genre || 'General'} size="small" variant="outlined" />
-                </Box>
-                
-                {/* Show stock for admin always */}
-                {user?.isAdmin && (
-                  <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                    Stock: {stock} units
-                  </Typography>
-                )}
-                
-                <Typography variant="h5" color="primary" sx={{ mt: 2 }} fontWeight="bold">
-                  ₹{b.price}
-                </Typography>
-              </CardContent>
-
-              <CardActions sx={{ p: 2, pt: 0, flexDirection: 'column', gap: 1 }}>
-                <Button
-                  variant="contained"
-                  fullWidth
-                  startIcon={<ShoppingCart />}
-                  onClick={() => addToCart(b.id, 1)}
-                  disabled={isOutOfStock}
-                >
-                  {isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
-                </Button>
-                
-                <Button
-                  variant="outlined"
-                  fullWidth
-                  size="small"
-                  onClick={() => api.viewBook(b.id)}
-                >
-                  Mark as Viewed
-                </Button>
-                
-                {user?.isAdmin && (
-                  <Button
-                    size="small"
-                    color="error"
-                    fullWidth
-                    onClick={async () => {
-                      if (!confirm(`Delete "${b.title}"?`)) return;
-                      try {
-                        await api.deleteBookById(b.id);
-                        window.location.reload();
-                      } catch (e) { 
-                        alert(e.message);
-                      }
-                    }}
-                  >
-                    Delete Book
-                  </Button>
-                )}
-              </CardActions>
-            </Card>
+                {genres.map(genre => (
+                  <MenuItem key={genre} value={genre}>
+                    {genre === 'all' ? 'All Genres' : genre}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Grid>
-        );
-      })
-    )}
-  </Grid>
-</Container>
 
-);
+          <Grid item xs={12} sm={6} md={2}>
+            <FormControl fullWidth>
+              <InputLabel>Sort By</InputLabel>
+              <Select
+                value={sortBy}
+                label="Sort By"
+                onChange={(e) => setSortBy(e.target.value)}
+              >
+                <MenuItem value="title">Title (A-Z)</MenuItem>
+                <MenuItem value="author">Author (A-Z)</MenuItem>
+                <MenuItem value="price-low">Price: Low to High</MenuItem>
+                <MenuItem value="price-high">Price: High to Low</MenuItem>
+                <MenuItem value="stock">Stock Available</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+        </Grid>
+      </Paper>
+
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Typography variant="body2" color="text.secondary">
+          Showing {startIndex + 1}-{Math.min(endIndex, filteredAndSortedBooks.length)} of {filteredAndSortedBooks.length} books
+        </Typography>
+        
+        <FormControl size="small" sx={{ minWidth: 120 }}>
+          <InputLabel>Per Page</InputLabel>
+          <Select
+            value={itemsPerPage}
+            label="Per Page"
+            onChange={handleItemsPerPageChange}
+          >
+            <MenuItem value={12}>12</MenuItem>
+            <MenuItem value={24}>24</MenuItem>
+            <MenuItem value={48}>48</MenuItem>
+            <MenuItem value={96}>96</MenuItem>
+          </Select>
+        </FormControl>
+      </Box>
+
+      {err && <Alert severity="error" sx={{ mb: 3 }}>{err}</Alert>}
+
+      <Grid container spacing={3}>
+        {loading ? (
+          Array.from({ length: itemsPerPage }).map((_, index) => (
+            <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+              <BookCardSkeleton />
+            </Grid>
+          ))
+        ) : currentBooks.length === 0 ? (
+          <Grid item xs={12}>
+            <Alert severity="info">No books found</Alert>
+          </Grid>
+        ) : (
+          currentBooks.map(book => (
+            <Grid item xs={12} sm={6} md={4} lg={3} key={book.id}>
+              <BookCard
+                book={book}
+                onAddToCart={addToCart}
+                onView={(id) => api.viewBook(id)}
+                onDelete={handleDeleteBook}
+                user={user}
+              />
+            </Grid>
+          ))
+        )}
+      </Grid>
+
+      {totalPages > 1 && !loading && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 6 }}>
+          <Stack spacing={2} alignItems="center">
+            <Pagination
+              count={totalPages}
+              page={currentPage}
+              onChange={handlePageChange}
+              color="primary"
+              size="large"
+              showFirstButton
+              showLastButton
+            />
+            <Typography variant="body2" color="text.secondary">
+              Page {currentPage} of {totalPages}
+            </Typography>
+          </Stack>
+        </Box>
+      )}
+    </Container>
+  );
 }

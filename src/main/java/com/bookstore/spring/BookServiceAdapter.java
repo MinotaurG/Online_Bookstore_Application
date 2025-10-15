@@ -41,6 +41,18 @@ public class BookServiceAdapter {
         return bookService.searchByTitleOrAuthorContains(q);
     }
 
+    public int migrateToAsin() {
+        return bookService.migrateExistingBooksToAsin();
+    }
+
+    public Book findByAsin(String asin) {
+        return bookService.getBookByAsin(asin);
+    }
+
+    public boolean deleteByAsin(String asin) {
+        return bookService.deleteByAsin(asin);
+    }
+
     // writes (admin add/update/delete/bulk) → evict caches
     @org.springframework.cache.annotation.CacheEvict(value={"booksAll","booksById"}, allEntries=true)
     public void save(Book book) {

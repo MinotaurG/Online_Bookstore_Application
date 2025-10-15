@@ -1,0 +1,82 @@
+[
+  {
+    "id": "b-hp-1",
+    "title": "Harry Potter and the Philosopher's Stone",
+    "author": "J.K. Rowling",
+    "genre": "Fantasy",
+    "price": 24.99,
+    "stockQuantity": 45
+  },
+  {
+    "id": "b-hp-2",
+    "title": "Harry Potter and the Chamber of Secrets",
+    "author": "J.K. Rowling",
+    "genre": "Fantasy",
+    "price": 24.99,
+    "stockQuantity": 38
+  },
+  {
+    "id": "b-lotr-1",
+    "title": "The Lord of the Rings: The Fellowship of the Ring",
+    "author": "J.R.R. Tolkien",
+    "genre": "Fantasy",
+    "price": 32.99,
+    "stockQuantity": 22
+  },
+  {
+    "id": "b-lotr-2",
+    "title": "The Lord of the Rings: The Two Towers",
+    "author": "J.R.R. Tolkien",
+    "genre": "Fantasy",
+    "price": 32.99,
+    "stockQuantity": 18
+  },
+  {
+    "id": "b-1984",
+    "title": "1984",
+    "author": "George Orwell",
+    "genre": "Dystopian",
+    "price": 18.99,
+    "stockQuantity": 55
+  },
+  {
+    "id": "b-gatsby",
+    "title": "The Great Gatsby",
+    "author": "F. Scott Fitzgerald",
+    "genre": "Fiction",
+    "price": 16.99,
+    "stockQuantity": 42
+  },
+  {
+    "id": "b-mockingbird",
+    "title": "To Kill a Mockingbird",
+    "author": "Harper Lee",
+    "genre": "Fiction",
+    "price": 19.99,
+    "stockQuantity": 35
+  },
+  {
+    "id": "b-pride",
+    "title": "Pride and Prejudice",
+    "author": "Jane Austen",
+    "genre": "Romance",
+    "price": 15.99,
+    "stockQuantity": 28
+  },
+  {
+    "id": "b-hobbit",
+    "title": "The Hobbit",
+    "author": "J.R.R. Tolkien",
+    "genre": "Fantasy",
+    "price": 22.99,
+    "stockQuantity": 40
+  },
+  {
+    "id": "b-catcher",
+    "title": "The Catcher in the Rye",
+    "author": "J.D. Salinger",
+    "genre": "Fiction",
+    "price": 17.99,
+    "stockQuantity": 31
+  }
+]

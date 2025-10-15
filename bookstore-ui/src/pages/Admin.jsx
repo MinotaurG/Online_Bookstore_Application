@@ -1,26 +1,8 @@
 import { useState, useEffect } from 'react';
 import { 
-  Container,
-  Paper,
-  Typography,
-  TextField,
-  Button,
-  Box,
-  Grid,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  IconButton,
-  Chip,
-  Alert,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Divider
+  Container, Paper, Typography, TextField, Button, Box, Grid,
+  Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
+  IconButton, Chip, Alert, Dialog, DialogTitle, DialogContent, DialogActions
 } from '@mui/material';
 import { Edit, Delete, Add, Save, Cancel } from '@mui/icons-material';
 import { api } from '../api';
@@ -38,10 +20,11 @@ export default function Admin({ onBooksUpdate }) {
     author: '',
     genre: '',
     price: '',
-    stockQuantity: ''
+    stockQuantity: '',
+    coverImage: '',
+    isbn: ''
   });
 
-  // Load books
   useEffect(() => {
     loadBooks();
   }, []);
@@ -69,7 +52,9 @@ export default function Admin({ onBooksUpdate }) {
       author: book.author || '',
       genre: book.genre || '',
       price: book.price?.toString() || '',
-      stockQuantity: book.stockQuantity?.toString() || ''
+      stockQuantity: book.stockQuantity?.toString() || '',
+      coverImage: book.coverImage || '',
+      isbn: book.isbn || ''
     });
     setEditingBook(book);
     setShowForm(true);
@@ -82,7 +67,9 @@ export default function Admin({ onBooksUpdate }) {
       author: '',
       genre: '',
       price: '',
-      stockQuantity: ''
+      stockQuantity: '',
+      coverImage: '',
+      isbn: ''
     });
     setEditingBook(null);
     setShowForm(true);
@@ -97,7 +84,9 @@ export default function Admin({ onBooksUpdate }) {
       author: '',
       genre: '',
       price: '',
-      stockQuantity: ''
+      stockQuantity: '',
+      coverImage: '',
+      isbn: ''
     });
   };
 
@@ -116,7 +105,9 @@ export default function Admin({ onBooksUpdate }) {
           author: formData.author,
           genre: formData.genre,
           price: parseFloat(formData.price),
-          stockQuantity: parseInt(formData.stockQuantity)
+          stockQuantity: parseInt(formData.stockQuantity),
+          coverImage: formData.coverImage || null,
+          isbn: formData.isbn || null
         })
       });
 
@@ -148,22 +139,15 @@ export default function Admin({ onBooksUpdate }) {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      {/* Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
         <Typography variant="h4" fontWeight="bold">
           📚 Book Management
         </Typography>
-        <Button
-          variant="contained"
-          startIcon={<Add />}
-          onClick={handleNew}
-          size="large"
-        >
+        <Button variant="contained" startIcon={<Add />} onClick={handleNew} size="large">
           Add New Book
         </Button>
       </Box>
 
-      {/* Books Table */}
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -178,10 +162,7 @@ export default function Admin({ onBooksUpdate }) {
           </TableHead>
           <TableBody>
             {books.map((book) => (
-              <TableRow 
-                key={book.id}
-                sx={{ '&:hover': { bgcolor: 'action.hover' } }}
-              >
+              <TableRow key={book.id} sx={{ '&:hover': { bgcolor: 'action.hover' } }}>
                 <TableCell>
                   <Typography variant="subtitle2" fontWeight="medium">
                     {book.title}
@@ -200,18 +181,10 @@ export default function Admin({ onBooksUpdate }) {
                   />
                 </TableCell>
                 <TableCell align="right">
-                  <IconButton 
-                    color="primary" 
-                    onClick={() => handleEdit(book)}
-                    size="small"
-                  >
+                  <IconButton color="primary" onClick={() => handleEdit(book)} size="small">
                     <Edit />
                   </IconButton>
-                  <IconButton 
-                    color="error" 
-                    onClick={() => handleDelete(book)}
-                    size="small"
-                  >
+                  <IconButton color="error" onClick={() => handleDelete(book)} size="small">
                     <Delete />
                   </IconButton>
                 </TableCell>
@@ -221,13 +194,7 @@ export default function Admin({ onBooksUpdate }) {
         </Table>
       </TableContainer>
 
-      {/* Add/Edit Dialog */}
-      <Dialog 
-        open={showForm} 
-        onClose={handleCancel}
-        maxWidth="sm"
-        fullWidth
-      >
+      <Dialog open={showForm} onClose={handleCancel} maxWidth="sm" fullWidth>
         <form onSubmit={handleSubmit}>
           <DialogTitle>
             {editingBook ? '✏️ Edit Book' : '➕ Add New Book'}
@@ -237,45 +204,31 @@ export default function Admin({ onBooksUpdate }) {
             <Grid container spacing={2} sx={{ mt: 1 }}>
               <Grid item xs={12}>
                 <TextField
-                  fullWidth
-                  label="Title"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleChange}
-                  required
-                  autoFocus
+                  fullWidth label="Title" name="title"
+                  value={formData.title} onChange={handleChange}
+                  required autoFocus
                 />
               </Grid>
 
               <Grid item xs={12}>
                 <TextField
-                  fullWidth
-                  label="Author"
-                  name="author"
-                  value={formData.author}
-                  onChange={handleChange}
+                  fullWidth label="Author" name="author"
+                  value={formData.author} onChange={handleChange}
                 />
               </Grid>
 
               <Grid item xs={12} sm={6}>
                 <TextField
-                  fullWidth
-                  label="Genre"
-                  name="genre"
-                  value={formData.genre}
-                  onChange={handleChange}
+                  fullWidth label="Genre" name="genre"
+                  value={formData.genre} onChange={handleChange}
                   placeholder="e.g., Programming, Fiction"
                 />
               </Grid>
 
               <Grid item xs={12} sm={6}>
                 <TextField
-                  fullWidth
-                  label="Price (₹)"
-                  name="price"
-                  type="number"
-                  value={formData.price}
-                  onChange={handleChange}
+                  fullWidth label="Price (₹)" name="price" type="number"
+                  value={formData.price} onChange={handleChange}
                   inputProps={{ step: "0.01", min: "0" }}
                   required
                 />
@@ -283,25 +236,60 @@ export default function Admin({ onBooksUpdate }) {
 
               <Grid item xs={12} sm={6}>
                 <TextField
-                  fullWidth
-                  label="Stock Quantity"
-                  name="stockQuantity"
-                  type="number"
-                  value={formData.stockQuantity}
-                  onChange={handleChange}
+                  fullWidth label="Stock Quantity" name="stockQuantity" type="number"
+                  value={formData.stockQuantity} onChange={handleChange}
                   inputProps={{ min: "0" }}
                   required
                 />
               </Grid>
+              
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth label="ISBN" name="isbn"
+                  value={formData.isbn} onChange={handleChange}
+                  placeholder="9780132350884"
+                  helperText="10 or 13 digit ISBN"
+                />
+              </Grid>
+              
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth label="Cover Image URL" name="coverImage"
+                  value={formData.coverImage} onChange={handleChange}
+                  placeholder="https://example.com/cover.jpg"
+                  helperText="Optional: Leave empty to use ISBN cover"
+                />
+              </Grid>
+              
+              {formData.coverImage && (
+                <Grid item xs={12}>
+                  <Box sx={{ textAlign: 'center' }}>
+                    <Typography variant="caption" display="block" gutterBottom>
+                      Preview:
+                    </Typography>
+                    <img 
+                      src={formData.coverImage} 
+                      alt="Cover preview" 
+                      style={{ 
+                        maxWidth: '200px', 
+                        maxHeight: '300px',
+                        objectFit: 'cover',
+                        borderRadius: '8px',
+                        border: '1px solid #ddd'
+                      }}
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                      }}
+                    />
+                  </Box>
+                </Grid>
+              )}
 
               {editingBook && (
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12}>
                   <TextField
-                    fullWidth
-                    label="Book ID"
-                    name="id"
-                    value={formData.id}
-                    disabled
+                    fullWidth label="Book ID" name="id"
+                    value={formData.id} disabled
                     helperText="Cannot be changed"
                   />
                 </Grid>
@@ -310,25 +298,16 @@ export default function Admin({ onBooksUpdate }) {
           </DialogContent>
 
           <DialogActions sx={{ p: 2 }}>
-            <Button 
-              onClick={handleCancel}
-              startIcon={<Cancel />}
-            >
+            <Button onClick={handleCancel} startIcon={<Cancel />}>
               Cancel
             </Button>
-            <Button 
-              type="submit"
-              variant="contained"
-              disabled={loading}
-              startIcon={<Save />}
-            >
+            <Button type="submit" variant="contained" disabled={loading} startIcon={<Save />}>
               {loading ? 'Saving...' : (editingBook ? 'Update' : 'Add Book')}
             </Button>
           </DialogActions>
         </form>
       </Dialog>
 
-      {/* Quick Link to Bulk Seed */}
       <Box sx={{ mt: 4 }}>
         <Alert severity="info">
           Need to add multiple books at once? 

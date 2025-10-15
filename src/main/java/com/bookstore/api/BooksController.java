@@ -66,6 +66,40 @@ public class BooksController {
         return ResponseEntity.ok(Map.of("count", count));
     }
 
+    // ADMIN: Migrate existing books to have ASINs (run once)
+    @PostMapping("/migrate-asin")
+    public ResponseEntity<?> migrateAsin(HttpSession session) {
+        if (!sessionAuth.isAdmin(session))
+            return ResponseEntity.status(403).body("Forbidden: admin only");
+
+        int updated = adapter.migrateToAsin();
+        return ResponseEntity.ok(Map.of(
+                "message", "Migration complete",
+                "booksUpdated", updated
+        ));
+    }
+
+    // NEW: Get book by ASIN
+    @GetMapping("/asin/{asin}")
+    public ResponseEntity<Book> getByAsin(@PathVariable String asin) {
+        Book book = adapter.findByAsin(asin);
+        return book != null ? ResponseEntity.ok(book) : ResponseEntity.notFound().build();
+    }
+
+    // ADMIN: Delete by ASIN (in addition to delete by ID)
+    @DeleteMapping("/asin/{asin}")
+    public ResponseEntity<?> deleteByAsin(HttpSession session, @PathVariable String asin) {
+        if (!sessionAuth.isAdmin(session))
+            return ResponseEntity.status(403).body("Forbidden: admin only");
+
+        boolean deleted = adapter.deleteByAsin(asin);
+        if (deleted) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     // ADMIN: delete by ID
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteById(HttpSession session, @PathVariable String id) {

@@ -60,20 +60,31 @@ public class BookService {
                     .tableName(tableName)
                     .attributeDefinitions(
                             AttributeDefinition.builder().attributeName("id").attributeType(ScalarAttributeType.S).build(),
-                            AttributeDefinition.builder().attributeName("title").attributeType(ScalarAttributeType.S).build()
+                            AttributeDefinition.builder().attributeName("title").attributeType(ScalarAttributeType.S).build(),
+                            AttributeDefinition.builder().attributeName("asin").attributeType(ScalarAttributeType.S).build()  // NEW
                     )
                     .keySchema(KeySchemaElement.builder().attributeName("id").keyType(KeyType.HASH).build())
                     .provisionedThroughput(ProvisionedThroughput.builder()
                             .readCapacityUnits(5L).writeCapacityUnits(5L).build())
-                    .globalSecondaryIndexes(GlobalSecondaryIndex.builder()
-                            .indexName("TitleIndex")
-                            .keySchema(KeySchemaElement.builder().attributeName("title").keyType(KeyType.HASH).build())
-                            .projection(Projection.builder().projectionType(ProjectionType.ALL).build())
-                            .provisionedThroughput(ProvisionedThroughput.builder()
-                                    .readCapacityUnits(5L).writeCapacityUnits(5L).build())
-                            .build())
+                    .globalSecondaryIndexes(
+                            // Existing TitleIndex
+                            GlobalSecondaryIndex.builder()
+                                    .indexName("TitleIndex")
+                                    .keySchema(KeySchemaElement.builder().attributeName("title").keyType(KeyType.HASH).build())
+                                    .projection(Projection.builder().projectionType(ProjectionType.ALL).build())
+                                    .provisionedThroughput(ProvisionedThroughput.builder()
+                                            .readCapacityUnits(5L).writeCapacityUnits(5L).build())
+                                    .build(),
+                            // NEW: AsinIndex
+                            GlobalSecondaryIndex.builder()
+                                    .indexName("AsinIndex")
+                                    .keySchema(KeySchemaElement.builder().attributeName("asin").keyType(KeyType.HASH).build())
+                                    .projection(Projection.builder().projectionType(ProjectionType.ALL).build())
+                                    .provisionedThroughput(ProvisionedThroughput.builder()
+                                            .readCapacityUnits(5L).writeCapacityUnits(5L).build())
+                                    .build()
+                    )
                     .build();
-
 
             dynamoDbClient.createTable(createTableRequest);
             dynamoDbClient.waiter().waitUntilTableExists(
@@ -90,6 +101,7 @@ public class BookService {
 
     /** Plain insert (used for tests or to insert with a known id). */
     public void saveBook(Book book) {
+        book.ensureAsin();
         bookTable.putItem(book);
     }
 
@@ -100,6 +112,8 @@ public class BookService {
      * Otherwise insert the incoming book (preserving its id).
      */
     public void saveOrUpdateBookByTitle(Book book) {
+        book.ensureAsin();
+
         Optional<Book> existing = findOneByTitleIgnoreCase(book.getTitle());
 
 
@@ -185,6 +199,62 @@ public class BookService {
         return all.stream()
                 .filter(b -> b.getTitle() != null && b.getTitle().equalsIgnoreCase(title))
                 .findFirst();
+    }
+
+    // -------------------------------
+    // ASIN-RELATED OPERATIONS
+    // -------------------------------
+
+    /**
+     * Get book by ASIN (using GSI)
+     */
+    public Book getBookByAsin(String asin) {
+        if (asin == null || !AsinGenerator.isValid(asin)) {
+            return null;
+        }
+
+        DynamoDbIndex<Book> asinIndex = bookTable.index("AsinIndex");
+        QueryConditional qc = QueryConditional.keyEqualTo(Key.builder().partitionValue(asin).build());
+
+        List<Book> results = StreamSupport.stream(
+                        asinIndex.query(r -> r.queryConditional(qc)).spliterator(), false)
+                .flatMap(page -> page.items().stream())
+                .collect(Collectors.toList());
+
+        return results.isEmpty() ? null : results.get(0);
+    }
+
+    /**
+     * Migrate all existing books to have ASINs
+     * Call this once to add ASINs to books that don't have them
+     */
+    public int migrateExistingBooksToAsin() {
+        List<Book> allBooks = listAllBooks();
+        int updated = 0;
+
+        for (Book book : allBooks) {
+            if (book.getAsin() == null || book.getAsin().isBlank()) {
+                book.ensureAsin();
+                bookTable.updateItem(book);
+                updated++;
+                System.out.println("Added ASIN to: " + book.getTitle() + " -> " + book.getAsin());
+            }
+        }
+
+        System.out.println("Migration complete: " + updated + " books updated with ASINs");
+        return updated;
+    }
+
+    /**
+     * Delete by ASIN (easier to remember than UUID)
+     */
+    public boolean deleteByAsin(String asin) {
+        Book book = getBookByAsin(asin);
+        if (book != null) {
+            deleteBook(book.getId());
+            return true;
+        }
+        return false;
     }
 
 

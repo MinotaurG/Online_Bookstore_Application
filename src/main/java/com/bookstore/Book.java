@@ -10,11 +10,13 @@ import java.math.BigDecimal;
 @DynamoDbBean
 public class Book {
     private String id;
+    private String asin;
     private String title;
     private String author;
     private String genre;
     private BigDecimal price;
     private Integer stockQuantity;
+	private String isbn;
 
     public Book() {}
 
@@ -53,6 +55,24 @@ public class Book {
     @DynamoDbAttribute("stockQuantity")
     public Integer getStockQuantity() { return stockQuantity; }
     public void setStockQuantity(Integer stockQuantity) { this.stockQuantity = stockQuantity; }
+
+    @DynamoDbAttribute("isbn")
+    public String getIsbn() { return isbn; }
+    public void setIsbn(String isbn) { this.isbn = isbn; }
+
+    @DynamoDbAttribute("asin")
+    @DynamoDbSecondaryPartitionKey(indexNames = {"AsinIndex"})
+    public String getAsin() { return asin; }
+    public void setAsin(String asin) { this.asin = asin; }
+
+    /**
+     * Ensure ASIN is set before saving
+     */
+    public void ensureAsin() {
+        if (this.asin == null || this.asin.isBlank()) {
+            this.asin = AsinGenerator.generateFromBook(this.title, this.author);
+        }
+    }
 
     @Override
     public String toString() {
