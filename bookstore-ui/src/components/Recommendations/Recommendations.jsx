@@ -1,51 +1,55 @@
 import { useState, useEffect } from 'react';
 import { 
-  Container, Typography, Grid, Card, CardContent, CardActions, Button, Box, 
-  Alert, Chip, CircularProgress
+  Container, Typography, Box, Button, CircularProgress, Alert 
 } from '@mui/material';
-import { ShoppingCart, Recommend } from '@mui/icons-material';
+import { Recommend } from '@mui/icons-material';
 import { api } from '../../api';
-import { useNavigate } from 'react-router-dom';
+import BookCard from '../Books/BookCard';
 
-export default function Recommendations() {
+export default function Recommendations({ addToCart, user }) {
   const [recs, setRecs] = useState([]);
   const [err, setErr] = useState('');
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+  const [isPersonalized, setIsPersonalized] = useState(false);
   
   useEffect(() => {
     (async () => {
       try {
         setLoading(true);
         
+        // Try to get personalized recommendations first
         let personalRecs = [];
         try {
           personalRecs = await api.recommendations();
+          if (personalRecs && personalRecs.length > 0) {
+            setRecs(personalRecs);
+            setIsPersonalized(true);
+            setErr('');
+            setLoading(false);
+            return;
+          }
         } catch (e) {
-          console.log('No personalized recommendations');
+          console.log('No personalized recommendations available');
         }
         
-        if (personalRecs && personalRecs.length > 0) {
-          setRecs(personalRecs);
-          setErr('');
-          setLoading(false);
-          return;
-        }
-        
+        // Fallback to popular books
         const allBooks = await api.listBooks();
         const topBooks = allBooks
           .filter(book => (book.stockQuantity || 0) > 0)
           .sort((a, b) => {
+            // Sort by stock (higher = more popular) then by price
             const stockDiff = (b.stockQuantity || 0) - (a.stockQuantity || 0);
             if (stockDiff !== 0) return stockDiff;
             return (a.price || 0) - (b.price || 0);
           })
-          .slice(0, 5);
+          .slice(0, 12); // Show top 12
         
         setRecs(topBooks);
+        setIsPersonalized(false);
         setErr('');
       } catch (e) { 
         setErr(e.message);
+        console.error('Failed to load recommendations:', e);
       } finally {
         setLoading(false);
       }
@@ -64,122 +68,63 @@ export default function Recommendations() {
   }
   
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
+    <Container maxWidth="xl" sx={{ py: 4 }}>
       <Box sx={{ mb: 4 }}>
         <Typography variant="h4" gutterBottom fontWeight="bold">
           ✨ Recommended for You
         </Typography>
         <Typography variant="body1" color="text.secondary">
-          {recs.length > 0 ? 'Popular books available now' : 'No recommendations available'}
+          {isPersonalized 
+            ? 'Based on your browsing history and preferences'
+            : 'Popular books available now'}
         </Typography>
       </Box>
 
       {err && <Alert severity="error" sx={{ mb: 3 }}>{err}</Alert>}
       
       {recs.length === 0 ? (
-        <Box sx={{ p: 6, textAlign: 'center', border: '1px solid', borderColor: 'divider', borderRadius: 2 }}>
+        <Box sx={{ 
+          p: 6, 
+          textAlign: 'center', 
+          border: '1px solid #e7e7e7', 
+          borderRadius: 2,
+          backgroundColor: '#fafafa'
+        }}>
           <Recommend sx={{ fontSize: 80, color: 'text.secondary', mb: 2 }} />
           <Typography variant="h6" gutterBottom>
             No Recommendations Available
           </Typography>
           <Typography color="text.secondary" paragraph>
-            Check back later for personalized suggestions
+            Start browsing books to get personalized recommendations
           </Typography>
           <Button variant="contained" href="/">
             Browse All Books
           </Button>
         </Box>
       ) : (
-        <Grid container spacing={3}>
-          {recs.map(book => {
-            const stock = book.stockQuantity || 0;
-            const isLowStock = stock < 5 && stock > 0;
-            
-            return (
-              <Grid item xs={12} sm={6} md={4} key={book.id}>
-                <Card sx={{ 
-                  height: '100%', 
-                  display: 'flex', 
-                  flexDirection: 'column',
-                  transition: 'transform 0.2s, box-shadow 0.2s',
-                  '&:hover': {
-                    transform: 'translateY(-4px)',
-                    boxShadow: 4,
-                  }
-                }}>
-                  <Box
-                    sx={{
-                      height: 200,
-                      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      p: 2,
-                      position: 'relative'
-                    }}
-                  >
-                    {isLowStock && (
-                      <Chip 
-                        label={`Only ${stock} left!`} 
-                        size="small" 
-                        color="error"
-                        sx={{ 
-                          position: 'absolute', 
-                          top: 12, 
-                          right: 12,
-                          fontWeight: 'bold'
-                        }}
-                      />
-                    )}
-                    
-                    <Typography 
-                      variant="h6" 
-                      sx={{ 
-                        color: 'white', 
-                        textAlign: 'center',
-                        fontWeight: 700,
-                        textShadow: '0 2px 4px rgba(0,0,0,0.3)'
-                      }}
-                    >
-                      {book.title}
-                    </Typography>
-                  </Box>
-                  
-                  <CardContent sx={{ flexGrow: 1 }}>
-                    <Typography variant="subtitle1" gutterBottom fontWeight="medium">
-                      {book.title}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" gutterBottom>
-                      by {book.author || 'Unknown Author'}
-                    </Typography>
-                    
-                    <Chip 
-                      label={book.genre || 'General'} 
-                      size="small" 
-                      variant="outlined"
-                      sx={{ mt: 1 }}
-                    />
-                    
-                    <Typography variant="h5" color="primary" fontWeight="bold" sx={{ mt: 2 }}>
-                      ₹{book.price}
-                    </Typography>
-                  </CardContent>
-                  
-                  <CardActions sx={{ p: 2, pt: 0 }}>
-                    <Button 
-                      variant="contained" 
-                      fullWidth
-                      startIcon={<ShoppingCart />}
-                      onClick={() => navigate('/')}
-                    >
-                      View in Catalog
-                    </Button>
-                  </CardActions>
-                </Card>
-              </Grid>
-            );
-          })}
-        </Grid>
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: {
+              xs: 'repeat(1, 1fr)',
+              sm: 'repeat(2, 1fr)',
+              md: 'repeat(3, 1fr)',
+              lg: 'repeat(4, 1fr)',
+            },
+            gap: 3,
+          }}
+        >
+          {recs.map(book => (
+            <Box key={book.id}>
+              <BookCard
+                book={book}
+                onAddToCart={addToCart}
+                onView={(id) => api.viewBook(id)}
+                user={user}
+              />
+            </Box>
+          ))}
+        </Box>
       )}
     </Container>
   );
