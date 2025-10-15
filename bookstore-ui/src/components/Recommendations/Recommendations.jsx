@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { 
-  Container, Typography, Box, Button, CircularProgress, Alert 
+  Container, Typography, Box, Button, CircularProgress, Alert, Stack 
 } from '@mui/material';
 import { Recommend } from '@mui/icons-material';
 import { api } from '../../api';
-import BookCard from '../Books/BookCard';
+import BookListItem from '../Books/BookListItem';
 
 export default function Recommendations({ addToCart, user }) {
   const [recs, setRecs] = useState([]);
@@ -42,7 +42,7 @@ export default function Recommendations({ addToCart, user }) {
             if (stockDiff !== 0) return stockDiff;
             return (a.price || 0) - (b.price || 0);
           })
-          .slice(0, 12); // Show top 12
+          .slice(0, 20); // Show top 20
         
         setRecs(topBooks);
         setIsPersonalized(false);
@@ -68,15 +68,15 @@ export default function Recommendations({ addToCart, user }) {
   }
   
   return (
-    <Container maxWidth="xl" sx={{ py: 4 }}>
+    <Container maxWidth="lg" sx={{ py: 4 }}>
       <Box sx={{ mb: 4 }}>
         <Typography variant="h4" gutterBottom fontWeight="bold">
           ✨ Recommended for You
         </Typography>
         <Typography variant="body1" color="text.secondary">
           {isPersonalized 
-            ? 'Based on your browsing history and preferences'
-            : 'Popular books available now'}
+            ? `${recs.length} personalized recommendation${recs.length > 1 ? 's' : ''} based on your browsing`
+            : `${recs.length} popular book${recs.length > 1 ? 's' : ''} available now`}
         </Typography>
       </Box>
 
@@ -102,29 +102,18 @@ export default function Recommendations({ addToCart, user }) {
           </Button>
         </Box>
       ) : (
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: {
-              xs: 'repeat(1, 1fr)',
-              sm: 'repeat(2, 1fr)',
-              md: 'repeat(3, 1fr)',
-              lg: 'repeat(4, 1fr)',
-            },
-            gap: 3,
-          }}
-        >
+        <Stack spacing={2}>
           {recs.map(book => (
-            <Box key={book.id}>
-              <BookCard
-                book={book}
-                onAddToCart={addToCart}
-                onView={(id) => api.viewBook(id)}
-                user={user}
-              />
-            </Box>
+            <BookListItem
+              key={book.id}
+              book={book}
+              onAddToCart={addToCart}
+              onView={(id) => api.viewBook(id)}
+              user={user}
+              subtitle={isPersonalized ? 'Recommended for you' : 'Popular choice'}
+            />
           ))}
-        </Box>
+        </Stack>
       )}
     </Container>
   );

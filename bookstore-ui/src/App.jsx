@@ -268,13 +268,14 @@ export default function App() {
               
               <Route 
                 path="/history" 
-                element={<History />} 
-              />
+                element={<History 
+				addToCart={addToCart} user={user} />}
+			  />
               
               <Route 
-                path="/recs" 
-                element={<Recommendations />} 
-              />
+				path="/recs" 
+				element={<Recommendations addToCart={addToCart} user={user} />} 
+			  />
               
               <Route 
                 path="/admin" 
