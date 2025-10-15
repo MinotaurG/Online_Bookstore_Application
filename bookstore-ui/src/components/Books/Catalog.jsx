@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { 
   Container, 
-  Grid, 
   TextField, 
   Box,
   Typography,
@@ -15,7 +14,8 @@ import {
   FormControl,
   InputLabel,
   Stack,
-  Paper
+  Paper,
+  Grid
 } from '@mui/material';
 import { Search } from '@mui/icons-material';
 import { api } from '../../api';
@@ -109,7 +109,6 @@ export default function Catalog({ addToCart, allBooks, user, loading }) {
     try {
       await api.deleteBookById(book.id);
       await load();
-      if (loadBooks) loadBooks();
     } catch (e) {
       alert(e.message);
     }
@@ -212,20 +211,31 @@ export default function Catalog({ addToCart, allBooks, user, loading }) {
 
       {err && <Alert severity="error" sx={{ mb: 3 }}>{err}</Alert>}
 
-      <Grid container spacing={3}>
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: {
+            xs: 'repeat(1, 1fr)',
+            sm: 'repeat(2, 1fr)',
+            md: 'repeat(3, 1fr)',
+            lg: 'repeat(4, 1fr)',
+          },
+          gap: 3,
+        }}
+      >
         {loading ? (
           Array.from({ length: itemsPerPage }).map((_, index) => (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+            <Box key={index}>
               <BookCardSkeleton />
-            </Grid>
+            </Box>
           ))
         ) : currentBooks.length === 0 ? (
-          <Grid item xs={12}>
+          <Box sx={{ gridColumn: '1 / -1' }}>
             <Alert severity="info">No books found</Alert>
-          </Grid>
+          </Box>
         ) : (
           currentBooks.map(book => (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={book.id}>
+            <Box key={book.id}>
               <BookCard
                 book={book}
                 onAddToCart={addToCart}
@@ -233,10 +243,10 @@ export default function Catalog({ addToCart, allBooks, user, loading }) {
                 onDelete={handleDeleteBook}
                 user={user}
               />
-            </Grid>
+            </Box>
           ))
         )}
-      </Grid>
+      </Box>
 
       {totalPages > 1 && !loading && (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 6 }}>
