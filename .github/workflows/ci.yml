@@ -71,4 +71,5 @@ jobs:
       with:
         name: bookstore-frontend-dist
         path: bookstore-ui/dist
+
         retention-days: 7
