@@ -6,18 +6,30 @@ import java.util.Objects;
 public class CartItem {
     private final String bookId;
     private final String title;
+    private final String author;      // NEW
+    private final String isbn;        // NEW
     private final BigDecimal unitPrice;
     private int quantity;
 
-    public CartItem(String bookId, String title, BigDecimal unitPrice, int quantity) {
+    // Constructor with all fields
+    public CartItem(String bookId, String title, String author, String isbn, BigDecimal unitPrice, int quantity) {
         this.bookId = bookId;
         this.title = title;
+        this.author = author;
+        this.isbn = isbn;
         this.unitPrice = unitPrice;
         this.quantity = Math.max(0, quantity);
     }
 
+    // Legacy constructor (for backward compatibility)
+    public CartItem(String bookId, String title, BigDecimal unitPrice, int quantity) {
+        this(bookId, title, null, null, unitPrice, quantity);
+    }
+
     public String getBookId() { return bookId; }
     public String getTitle() { return title; }
+    public String getAuthor() { return author; }           // NEW
+    public String getIsbn() { return isbn; }               // NEW
     public BigDecimal getUnitPrice() { return unitPrice; }
     public int getQuantity() { return quantity; }
 
@@ -30,8 +42,8 @@ public class CartItem {
         this.quantity = Math.max(0, quantity);
     }
 
-    public java.math.BigDecimal totalPrice() {
-        return unitPrice.multiply(java.math.BigDecimal.valueOf(quantity));
+    public BigDecimal totalPrice() {
+        return unitPrice.multiply(BigDecimal.valueOf(quantity));
     }
 
     @Override
@@ -49,6 +61,7 @@ public class CartItem {
 
     @Override
     public String toString() {
-        return String.format("%s x%d @ %s each -> %s", title, quantity, unitPrice, totalPrice());
+        return String.format("%s by %s x%d @ %s each -> %s",
+                title, author != null ? author : "Unknown", quantity, unitPrice, totalPrice());
     }
 }

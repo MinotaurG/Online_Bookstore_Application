@@ -1,0 +1,74 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, feature/* ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  backend-build:
+    name: Backend Build & Test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+    
+    - name: Build with Maven
+      run: mvn clean compile
+    
+    - name: Run unit tests
+      run: mvn test
+    
+    - name: Generate test coverage
+      run: mvn jacoco:report
+    
+    - name: Package application
+      run: mvn package -DskipTests
+    
+    - name: Upload JAR artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: bookstore-backend-jar
+        path: target/*.jar
+        retention-days: 7
+
+  frontend-build:
+    name: Frontend Build
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Setup Node.js 18
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: bookstore-ui/package-lock.json
+    
+    - name: Install dependencies
+      working-directory: ./bookstore-ui
+      run: npm ci
+    
+    - name: Build frontend
+      working-directory: ./bookstore-ui
+      run: npm run build
+      env:
+        CI: false
+    
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: bookstore-frontend-dist
+        path: bookstore-ui/dist
+        retention-days: 7

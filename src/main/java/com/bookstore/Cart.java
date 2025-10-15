@@ -6,13 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
-/**
- * Simple shopping cart. Uses a Map<bookId, CartItem>.
- * Not highly concurrent — intended per-user session. If you need concurrency,
- * wrap calls or use a concurrent map and atomic updates.
- */
 public class Cart {
-    // preserve insertion order for nicer printing
     private final Map<String, CartItem> items = new LinkedHashMap<>();
 
     public synchronized void addBook(Book book, int qty) {
@@ -20,7 +14,15 @@ public class Cart {
         String id = book.getId();
         CartItem existing = items.get(id);
         if (existing == null) {
-            items.put(id, new CartItem(id, book.getTitle(), book.getPrice(), qty));
+            // Create CartItem with full book details including author and isbn
+            items.put(id, new CartItem(
+                    id,
+                    book.getTitle(),
+                    book.getAuthor(),      // NEW
+                    book.getIsbn(),        // NEW
+                    book.getPrice(),
+                    qty
+            ));
         } else {
             existing.increaseQuantity(qty);
         }

@@ -3,6 +3,7 @@ package com.bookstore.api;
 import com.bookstore.Book;
 import com.bookstore.BulkDeleteRequest;
 import com.bookstore.BulkUpdateRequest;
+import com.bookstore.DeterministicId;
 import com.bookstore.spring.BookServiceAdapter;
 import com.bookstore.spring.SessionAuth;
 import jakarta.servlet.http.HttpSession;
@@ -50,29 +51,36 @@ public class BooksController {
         if (book == null || book.getTitle() == null || book.getTitle().isBlank())
             return ResponseEntity.badRequest().body("Book requires a non-empty title");
 
-        // Generate ID if not provided (for new books)
+        // Generate deterministic ID if missing or empty
         if (book.getId() == null || book.getId().isBlank()) {
-            book.setId(java.util.UUID.randomUUID().toString());
+            book.setId(DeterministicId.forBook(book.getTitle(), book.getAuthor()));
         }
 
-        // Ensure ASIN is generated
+        // Ensure ASIN
         book.ensureAsin();
 
-        // Use saveOrUpdate to prevent duplicates by title
         adapter.save(book);
-
         return ResponseEntity.created(URI.create("/api/books/" + book.getId())).build();
     }
 
-    // ADMIN: bulk upsert
     @PostMapping("/bulk")
     public ResponseEntity<?> bulkUpsert(HttpSession session, @RequestBody List<Book> books) {
         if (!sessionAuth.isAdmin(session)) return ResponseEntity.status(403).body("Forbidden: admin only");
         if (books == null || books.isEmpty()) return ResponseEntity.badRequest().body("No books provided");
+
         int count = 0;
         for (Book b : books) {
             if (b == null || b.getTitle() == null || b.getTitle().isBlank())
                 return ResponseEntity.badRequest().body("Each book needs a non-empty title");
+
+            // Generate deterministic ID if missing or empty
+            if (b.getId() == null || b.getId().isBlank()) {
+                b.setId(DeterministicId.forBook(b.getTitle(), b.getAuthor()));
+            }
+
+            // Ensure ASIN
+            b.ensureAsin();
+
             adapter.save(b);
             count++;
         }
