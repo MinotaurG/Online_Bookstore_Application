@@ -2,6 +2,7 @@ package com.bookstore.spring;
 
 import com.bookstore.Book;
 import com.bookstore.BookService;
+import com.bookstore.BulkUpdateRequest;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.PreDestroy;
@@ -67,6 +68,19 @@ public class BookServiceAdapter {
 
     public int deleteByTitle(String title) {
         return bookService.deleteByTitle(title);
+    }
+
+    // Bulk operations
+    public int bulkUpdate(List<BulkUpdateRequest.BookUpdate> updates) {
+        return bookService.bulkUpdateBooks(updates);
+    }
+
+    public int bulkDelete(List<String> ids, List<String> asins) {
+        return bookService.bulkDeleteBooks(ids, asins);
+    }
+
+    public List<Book> filterBooks(String genre, String author, Integer minStock, Integer maxStock) {
+        return bookService.filterBooks(genre, author, minStock, maxStock);
     }
 
     @PreDestroy

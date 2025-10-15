@@ -1,0 +1,11 @@
+ASIN,ID,Title,Author,Genre,Price,Stock,ISBN
+"B0THR2MDAU","b-mockingbird","To Kill a Mockingbird","Harper Lee","Fiction",29.99,100,"9780061120084"
+"B06AT3VJ03","b-hp-1","Harry Potter and the Philosopher's Stone","J.K. Rowling","Fantasy",34.99,45,"9780747532699"
+"B0TSMIPCE8","b-hobbit","The Hobbit","J.R.R. Tolkien","Fantasy",22.99,40,"9780547928227"
+"B0H8PP0TJP","b-catcher","The Catcher in the Rye","J.D. Salinger","Fiction",17.99,31,"9780316769174"
+"B0G2EPZGQH","b-pride","Pride and Prejudice","Jane Austen","Romance",15.99,28,"9780141439518"
+"B0SA0QI6PM","b-1984","1984","George Orwell","Dystopian",18.99,55,"9780451524935"
+"B0BOKR4CAB","b-lotr-2","The Lord of the Rings: The Two Towers","J.R.R. Tolkien","Fantasy",32.99,18,"9780345339713"
+"B0XKPCBGS6","b-lotr-1","The Lord of the Rings: The Fellowship of the Ring","J.R.R. Tolkien","Fantasy",32.99,22,"9780345339706"
+"B0IRDB6KZI","b-hp-2","Harry Potter and the Chamber of Secrets","J.K. Rowling","Fantasy",24.99,38,"9780747538493"
+"B0IBYYO9FC","b-gatsby","The Great Gatsby","F. Scott Fitzgerald","Fiction",16.99,42,"9780743273565"

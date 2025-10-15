@@ -90,4 +90,51 @@ export const api = {
 
   // RECOMMENDATIONS
   recommendations: () => fetch('/api/recommendations', { credentials: 'include' }).then(handle),
+  
+  // BULK OPERATIONS
+  bulkUpdateBooks: (updates) =>
+    fetch('/api/books/bulk', {
+      method: 'PUT',
+      headers: jsonHeaders,
+      credentials: 'include',
+      body: JSON.stringify({ updates })
+    }).then(handle),
+
+  bulkDeleteBooks: (ids, asins) =>
+    fetch('/api/books/bulk', {
+      method: 'DELETE',
+      headers: jsonHeaders,
+      credentials: 'include',
+      body: JSON.stringify({ ids, asins })
+    }).then(handle),
+
+  // EXPORT/DOWNLOAD
+  exportBooksJSON: (filters = {}) => {
+    const params = new URLSearchParams(filters);
+    return fetch(`/api/books/export/json?${params}`, {
+      credentials: 'include'
+    }).then(res => {
+      if (!res.ok) throw new Error('Export failed');
+      return res.blob();
+    });
+  },
+
+  exportBooksCSV: (filters = {}) => {
+    const params = new URLSearchParams(filters);
+    return fetch(`/api/books/export/csv?${params}`, {
+      credentials: 'include'
+    }).then(res => {
+      if (!res.ok) throw new Error('Export failed');
+      return res.blob();
+    });
+  },
+
+  // IMPORT/UPLOAD
+  importBooks: (books) =>
+    fetch('/api/books/bulk', {
+      method: 'POST',
+      headers: jsonHeaders,
+      credentials: 'include',
+      body: JSON.stringify(books)
+    }).then(handle),
 };

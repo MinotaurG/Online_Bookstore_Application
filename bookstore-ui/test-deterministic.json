@@ -1,0 +1,9 @@
+[
+  {
+    "title": "Same Book Test",
+    "author": "Same Author",
+    "genre": "Testing",
+    "price": 10.00,
+    "stockQuantity": 100
+  }
+]

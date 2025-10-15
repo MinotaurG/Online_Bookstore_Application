@@ -1,0 +1,4 @@
+ASIN,ID,Title,Author,Genre,Price,Stock,ISBN
+,,CSV Import Test 1,CSV Author,Fiction,12.99,40,4444444444
+,,CSV Import Test 2,CSV Author,Mystery,16.99,50,5555555555
+,,CSV Import Test 3,CSV Author,Thriller,20.99,60,6666666666

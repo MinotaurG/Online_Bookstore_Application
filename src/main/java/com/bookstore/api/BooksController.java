@@ -1,6 +1,8 @@
 package com.bookstore.api;
 
 import com.bookstore.Book;
+import com.bookstore.BulkDeleteRequest;
+import com.bookstore.BulkUpdateRequest;
 import com.bookstore.spring.BookServiceAdapter;
 import com.bookstore.spring.SessionAuth;
 import jakarta.servlet.http.HttpSession;
@@ -47,8 +49,19 @@ public class BooksController {
         if (!sessionAuth.isAdmin(session)) return ResponseEntity.status(403).body("Forbidden: admin only");
         if (book == null || book.getTitle() == null || book.getTitle().isBlank())
             return ResponseEntity.badRequest().body("Book requires a non-empty title");
+
+        // Generate ID if not provided (for new books)
+        if (book.getId() == null || book.getId().isBlank()) {
+            book.setId(java.util.UUID.randomUUID().toString());
+        }
+
+        // Ensure ASIN is generated
+        book.ensureAsin();
+
+        // Use saveOrUpdate to prevent duplicates by title
         adapter.save(book);
-        return ResponseEntity.created(URI.create("/api/books")).build();
+
+        return ResponseEntity.created(URI.create("/api/books/" + book.getId())).build();
     }
 
     // ADMIN: bulk upsert
@@ -115,4 +128,98 @@ public class BooksController {
         int deleted = adapter.deleteByTitle(title); // or 0/1 if your impl is simple
         return ResponseEntity.ok(Map.of("deleted", deleted));
     }
+
+    // ADMIN: Bulk update books
+    @PutMapping("/bulk")
+    public ResponseEntity<?> bulkUpdate(HttpSession session, @RequestBody BulkUpdateRequest request) {
+        if (!sessionAuth.isAdmin(session))
+            return ResponseEntity.status(403).body("Forbidden: admin only");
+
+        if (request.getUpdates() == null || request.getUpdates().isEmpty()) {
+            return ResponseEntity.badRequest().body("No updates provided");
+        }
+
+        int updated = adapter.bulkUpdate(request.getUpdates());
+        return ResponseEntity.ok(Map.of(
+                "message", "Bulk update complete",
+                "updated", updated,
+                "requested", request.getUpdates().size()
+        ));
+    }
+
+    // ADMIN: Bulk delete books
+    @DeleteMapping("/bulk")
+    public ResponseEntity<?> bulkDelete(HttpSession session, @RequestBody BulkDeleteRequest request) {
+        if (!sessionAuth.isAdmin(session))
+            return ResponseEntity.status(403).body("Forbidden: admin only");
+
+        if ((request.getIds() == null || request.getIds().isEmpty()) &&
+                (request.getAsins() == null || request.getAsins().isEmpty())) {
+            return ResponseEntity.badRequest().body("No IDs or ASINs provided");
+        }
+
+        int deleted = adapter.bulkDelete(request.getIds(), request.getAsins());
+        return ResponseEntity.ok(Map.of(
+                "message", "Bulk delete complete",
+                "deleted", deleted
+        ));
+    }
+
+    // ADMIN: Download catalog with filters (JSON)
+    @GetMapping("/export/json")
+    public ResponseEntity<?> exportJson(
+            HttpSession session,
+            @RequestParam(required = false) String genre,
+            @RequestParam(required = false) String author,
+            @RequestParam(required = false) Integer minStock,
+            @RequestParam(required = false) Integer maxStock) {
+
+        if (!sessionAuth.isAdmin(session))
+            return ResponseEntity.status(403).body("Forbidden: admin only");
+
+        List<Book> books = adapter.filterBooks(genre, author, minStock, maxStock);
+
+        return ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=catalog.json")
+                .header("Content-Type", "application/json")
+                .body(books);
+    }
+
+    // ADMIN: Download catalog as CSV
+    @GetMapping("/export/csv")
+    public ResponseEntity<?> exportCsv(
+            HttpSession session,
+            @RequestParam(required = false) String genre,
+            @RequestParam(required = false) String author,
+            @RequestParam(required = false) Integer minStock,
+            @RequestParam(required = false) Integer maxStock) {
+
+        if (!sessionAuth.isAdmin(session))
+            return ResponseEntity.status(403).body("Forbidden: admin only");
+
+        List<Book> books = adapter.filterBooks(genre, author, minStock, maxStock);
+
+        // Convert to CSV
+        StringBuilder csv = new StringBuilder();
+        csv.append("ASIN,ID,Title,Author,Genre,Price,Stock,ISBN\n");
+
+        for (Book book : books) {
+            csv.append(String.format("\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",%.2f,%d,\"%s\"\n",
+                    book.getAsin() != null ? book.getAsin() : "",
+                    book.getId() != null ? book.getId() : "",
+                    book.getTitle() != null ? book.getTitle().replace("\"", "\"\"") : "",
+                    book.getAuthor() != null ? book.getAuthor().replace("\"", "\"\"") : "",
+                    book.getGenre() != null ? book.getGenre() : "",
+                    book.getPrice() != null ? book.getPrice() : 0.0,
+                    book.getStockQuantity() != null ? book.getStockQuantity() : 0,
+                    book.getIsbn() != null ? book.getIsbn() : ""
+            ));
+        }
+
+        return ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=catalog.csv")
+                .header("Content-Type", "text/csv")
+                .body(csv.toString());
+    }
+
 }

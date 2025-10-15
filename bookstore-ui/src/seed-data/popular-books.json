@@ -5,7 +5,8 @@
     "author": "J.K. Rowling",
     "genre": "Fantasy",
     "price": 24.99,
-    "stockQuantity": 45
+    "stockQuantity": 45,
+    "isbn": "9780747532699"
   },
   {
     "id": "b-hp-2",
@@ -13,7 +14,8 @@
     "author": "J.K. Rowling",
     "genre": "Fantasy",
     "price": 24.99,
-    "stockQuantity": 38
+    "stockQuantity": 38,
+    "isbn": "9780747538493"
   },
   {
     "id": "b-lotr-1",
@@ -21,7 +23,8 @@
     "author": "J.R.R. Tolkien",
     "genre": "Fantasy",
     "price": 32.99,
-    "stockQuantity": 22
+    "stockQuantity": 22,
+    "isbn": "9780345339706"
   },
   {
     "id": "b-lotr-2",
@@ -29,7 +32,8 @@
     "author": "J.R.R. Tolkien",
     "genre": "Fantasy",
     "price": 32.99,
-    "stockQuantity": 18
+    "stockQuantity": 18,
+    "isbn": "9780345339713"
   },
   {
     "id": "b-1984",
@@ -37,7 +41,8 @@
     "author": "George Orwell",
     "genre": "Dystopian",
     "price": 18.99,
-    "stockQuantity": 55
+    "stockQuantity": 55,
+    "isbn": "9780451524935"
   },
   {
     "id": "b-gatsby",
@@ -45,7 +50,8 @@
     "author": "F. Scott Fitzgerald",
     "genre": "Fiction",
     "price": 16.99,
-    "stockQuantity": 42
+    "stockQuantity": 42,
+    "isbn": "9780743273565"
   },
   {
     "id": "b-mockingbird",
@@ -53,7 +59,8 @@
     "author": "Harper Lee",
     "genre": "Fiction",
     "price": 19.99,
-    "stockQuantity": 35
+    "stockQuantity": 35,
+    "isbn": "9780061120084"
   },
   {
     "id": "b-pride",
@@ -61,7 +68,8 @@
     "author": "Jane Austen",
     "genre": "Romance",
     "price": 15.99,
-    "stockQuantity": 28
+    "stockQuantity": 28,
+    "isbn": "9780141439518"
   },
   {
     "id": "b-hobbit",
@@ -69,7 +77,8 @@
     "author": "J.R.R. Tolkien",
     "genre": "Fantasy",
     "price": 22.99,
-    "stockQuantity": 40
+    "stockQuantity": 40,
+    "isbn": "9780547928227"
   },
   {
     "id": "b-catcher",
@@ -77,6 +86,7 @@
     "author": "J.D. Salinger",
     "genre": "Fiction",
     "price": 17.99,
-    "stockQuantity": 31
+    "stockQuantity": 31,
+    "isbn": "9780316769174"
   }
 ]

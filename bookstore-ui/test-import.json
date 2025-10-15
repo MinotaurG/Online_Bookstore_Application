@@ -1,0 +1,26 @@
+[
+  {
+    "title": "Import Test Book 1",
+    "author": "Import Author",
+    "genre": "Testing",
+    "price": 15.99,
+    "stockQuantity": 25,
+    "isbn": "1111111111"
+  },
+  {
+    "title": "Import Test Book 2",
+    "author": "Import Author",
+    "genre": "Testing",
+    "price": 19.99,
+    "stockQuantity": 30,
+    "isbn": "2222222222"
+  },
+  {
+    "title": "Import Test Book 3",
+    "author": "Import Author",
+    "genre": "Testing",
+    "price": 22.99,
+    "stockQuantity": 35,
+    "isbn": "3333333333"
+  }
+]

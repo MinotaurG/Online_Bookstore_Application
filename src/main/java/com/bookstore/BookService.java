@@ -257,6 +257,108 @@ public class BookService {
         return false;
     }
 
+    // -------------------------------
+    // BULK OPERATIONS
+    // -------------------------------
+
+    /**
+     * Bulk update books
+     * Returns count of successfully updated books
+     */
+    public int bulkUpdateBooks(List<BulkUpdateRequest.BookUpdate> updates) {
+        int updated = 0;
+
+        for (BulkUpdateRequest.BookUpdate update : updates) {
+            try {
+                Book book = null;
+
+                // Find book by ASIN or ID
+                if (update.getAsin() != null && !update.getAsin().isBlank()) {
+                    book = getBookByAsin(update.getAsin());
+                } else if (update.getId() != null && !update.getId().isBlank()) {
+                    book = getBookById(update.getId());
+                }
+
+                if (book == null) {
+                    System.out.println("Book not found: " +
+                            (update.getAsin() != null ? "ASIN=" + update.getAsin() : "ID=" + update.getId()));
+                    continue;
+                }
+
+                // Update only non-null fields
+                if (update.getTitle() != null) book.setTitle(update.getTitle());
+                if (update.getAuthor() != null) book.setAuthor(update.getAuthor());
+                if (update.getGenre() != null) book.setGenre(update.getGenre());
+                if (update.getPrice() != null) book.setPrice(update.getPrice());
+                if (update.getStockQuantity() != null) book.setStockQuantity(update.getStockQuantity());
+                if (update.getIsbn() != null) book.setIsbn(update.getIsbn());
+
+                bookTable.updateItem(book);
+                updated++;
+                System.out.println("Updated: " + book.getTitle() + " (ASIN=" + book.getAsin() + ")");
+
+            } catch (Exception e) {
+                System.err.println("Error updating book: " + e.getMessage());
+            }
+        }
+
+        return updated;
+    }
+
+    /**
+     * Bulk delete books by IDs or ASINs
+     * Returns count of successfully deleted books
+     */
+    public int bulkDeleteBooks(List<String> ids, List<String> asins) {
+        int deleted = 0;
+
+        // Delete by IDs
+        if (ids != null) {
+            for (String id : ids) {
+                try {
+                    deleteBook(id);
+                    deleted++;
+                    System.out.println("Deleted book with ID: " + id);
+                } catch (Exception e) {
+                    System.err.println("Error deleting book ID " + id + ": " + e.getMessage());
+                }
+            }
+        }
+
+        // Delete by ASINs
+        if (asins != null) {
+            for (String asin : asins) {
+                try {
+                    boolean success = deleteByAsin(asin);
+                    if (success) {
+                        deleted++;
+                        System.out.println("Deleted book with ASIN: " + asin);
+                    }
+                } catch (Exception e) {
+                    System.err.println("Error deleting book ASIN " + asin + ": " + e.getMessage());
+                }
+            }
+        }
+
+        return deleted;
+    }
+
+    /**
+     * Filter books by criteria (for catalog export)
+     */
+    public List<Book> filterBooks(String genre, String author, Integer minStock, Integer maxStock) {
+        List<Book> allBooks = listAllBooks();
+
+        return allBooks.stream()
+                .filter(book -> genre == null || genre.isBlank() ||
+                        (book.getGenre() != null && book.getGenre().equalsIgnoreCase(genre)))
+                .filter(book -> author == null || author.isBlank() ||
+                        (book.getAuthor() != null && book.getAuthor().toLowerCase().contains(author.toLowerCase())))
+                .filter(book -> minStock == null || book.getStockQuantity() >= minStock)
+                .filter(book -> maxStock == null || book.getStockQuantity() <= maxStock)
+                .collect(Collectors.toList());
+    }
+
 
     /** Close client resources. */
     public void close() {
