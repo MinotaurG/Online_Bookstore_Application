@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.hamcrest.Matchers.startsWith;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -102,7 +103,7 @@ class BooksControllerTest {
                         .content(bookJson))
                 .andExpect(status().isCreated())
                 .andExpect(header().exists("Location"))
-                .andExpect(header().string("Location", "/api/books"));
+                .andExpect(header().string("Location", startsWith("/api/books/")))
 
         Mockito.verify(adapter).save(any(Book.class));
     }
