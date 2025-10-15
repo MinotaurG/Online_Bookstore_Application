@@ -103,7 +103,7 @@ class BooksControllerTest {
                         .content(bookJson))
                 .andExpect(status().isCreated())
                 .andExpect(header().exists("Location"))
-                .andExpect(header().string("Location", startsWith("/api/books/")))
+                .andExpect(header().string("Location", startsWith("/api/books/")));
 
         Mockito.verify(adapter).save(any(Book.class));
     }
