@@ -1,115 +1,205 @@
-# 📚 Online Bookstore
+# Online Bookstore Application
 
-A full-stack online bookstore application with React frontend and Spring Boot backend.
+[![CI/CD Pipeline](https://github.com/MinotaurG/Online_Bookstore_Application/actions/workflows/ci.yml/badge.svg)](https://github.com/MinotaurG/Online_Bookstore_Application/actions)
+[![Test Coverage](https://img.shields.io/badge/coverage-58%25-yellow.svg)](https://github.com/MinotaurG/Online_Bookstore_Application)
+[![Java](https://img.shields.io/badge/Java-17-orange.svg)](https://www.oracle.com/java/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2-brightgreen.svg)](https://spring.io/projects/spring-boot)
+[![React](https://img.shields.io/badge/React-18-blue.svg)](https://reactjs.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+A production-ready full-stack online bookstore application built with React and Spring Boot, featuring Amazon-style ASIN inventory management, personalized recommendations, and comprehensive admin tools.
+
+> **Developed as part of the Amazon ATLAS Training Program**
+
 
 ## Features
 
-- Shopping cart with real-time stock validation
-- User authentication (Admin & Customer roles)
-- Order management
-- Browsing history
-- Book recommendations
-- Dark mode support
-- Responsive design with Material-UI
+### Customer Features
+- **Advanced Search** - Full-text search by title/author with filters and sorting
+- **Smart Shopping Cart** - Real-time stock validation with quantity management
+- **Seamless Checkout** - Order placement with validation and confirmation
+- **Order History** - View past orders with detailed item information
+- **Browsing History** - Recently viewed books (capacity: 10, FIFO ordering)
+- **Personalized Recommendations** - DynamoDB-based suggestion engine
+- **Responsive Design** - Mobile, tablet, and desktop optimized
+- **Dark Mode** - Toggle between light and dark themes
+- **Book Covers** - Automatic fetching via OpenLibrary API (ISBN-based)
+
+### Admin Features
+- **Inventory Management** - CRUD operations with Amazon-style ASIN system
+- **Bulk Upload** - CSV/JSON import with preview (drag & drop)
+- **Catalog Export** - Filtered export in JSON/CSV formats
+- **Bulk Edit** - Update multiple books simultaneously
+- **Bulk Delete** - Remove selected books in one operation
+- **Analytics-Ready** - Data structure optimized for business insights
+
+### Technical Features
+- **Session-based Authentication** - Secure login with admin authorization
+- **Material-UI Components** - Professional, polished interface
+- **Pagination** - Handles 1000+ books efficiently (12/24/48/96 per page)
+- **Deterministic IDs** - Hash-based IDs prevent duplicate books
+- **ASIN Generation** - B0XXXXXXXX format (like Amazon)
+- **134 Automated Tests** - 58% code coverage with JUnit & Mockito
+- **CI/CD Pipeline** - GitHub Actions with parallel builds
+
+---
 
 ## Tech Stack
 
-**Frontend:**
-- React 18
-- Material-UI v5
-- React Router v6
-- Vite
-- React Toastify
+### Backend
+- **Java 17 (LTS)** - Core language
+- **Spring Boot 3.2** - REST API framework
+- **DynamoDB (AWS SDK v2)** - NoSQL database
+- **Maven 3.9+** - Build tool
+- **JUnit 5** - Unit testing
+- **Mockito** - Mocking framework
 
-**Backend:**
-- Spring Boot 3.2
-- DynamoDB (AWS SDK v2)
-- Java 17
-- Maven
+### Frontend
+- **React 18** - UI library
+- **Material-UI v5** - Component library
+- **React Router v6** - Client-side routing
+- **Vite 5** - Build tool
+- **React Toastify** - Notifications
+
+### DevOps
+- **CI/CD:** GitHub Actions
+- **Version Control:** Git + GitHub
+- **Containerization:** Docker (DynamoDB Local)
+- **Testing:** JUnit, Mockito, Spring Test
+
+### External APIs
+- **OpenLibrary Covers API** - Book cover images by ISBN
+
+### DevOps
+- **CI/CD:** GitHub Actions
+- **Version Control:** Git + GitHub
+- **Containerization:** Docker (DynamoDB Local)
+- **Testing:** JUnit, Mockito, Spring Test
+
+### External APIs
+- **OpenLibrary Covers API:** Book cover images by ISBN
+
+---
+
+
+
+### Database Schema
+
+**DynamoDB Tables:**
+- **Users** - Authentication and authorization
+- **BrowsingHistory** - LinkedList-based recent views (max 10)
+- **UserRecommendations** - Personalized book suggestions
+
+**In-Memory Storage:**
+- **Books** - Catalog with ASIN indexing
+- **Orders** - Completed purchases
+
+---
 
 ## Quick Start
 
 ### Prerequisites
-- Node.js v18+
-- Java 17+
-- Maven
-- DynamoDB Local (for development)
+- **Java:** 17 or higher ([Download](https://adoptium.net/))
+- **Node.js:** 18+ ([Download](https://nodejs.org/))
+- **Maven:** 3.9+ ([Download](https://maven.apache.org/))
+- **DynamoDB Local:** Docker or standalone
 
 ### Backend Setup
 
 ```bash
-# Start DynamoDB Local (port 8000)
+# 1. Clone repository
+git clone https://github.com/MinotaurG/Online_Bookstore_Application.git
+cd Online_Bookstore_Application
+```
+### 2. Start DynamoDB Local (Option A: Docker)
+```bash
+docker run -p 8000:8000 amazon/dynamodb-local
+```
+### OR (Option B: Standalone)
+```bash
 java -Djava.library.path=./DynamoDBLocal_lib -jar DynamoDBLocal.jar -sharedDb
-
-# Run Spring Boot
-cd Online_Book_Store
-mvn spring-boot:run
 ```
 
-Backend runs on: `http://localhost:8080`
+### 3. Build and run Spring Boot (new terminal)
+```bash
+./mvnw clean install
+./mvnw spring-boot:run
+```
 
-### Frontend Setup
+Backend runs on: http://localhost:8080
+
+Verify backend:
+
+```bash
+curl http://localhost:8080/api/books
+```
+Frontend Setup
+
+### 1. Navigate to frontend directory
 
 ```bash
 cd bookstore-ui
+```
+
+### 2. Install dependencies
+
+```bash
 npm install
+```
+
+### 3. Start development server
+
+```bash
 npm run dev
 ```
 
-Frontend runs on: `http://localhost:5173`
+Frontend runs on: http://localhost:5173
+Build for production:
 
-## 👤 Demo Credentials
-
-**Admin Account:**
-- Username: `admin`
-- Password: `admin123`
-
-## 📂 Project Structure
-
-```
-Online_Book_Store/
-├── src/main/java/com/bookstore/     # Backend Java code
-│   ├── api/                          # REST controllers
-│   ├── config/                       # Configuration
-│   └── spring/                       # Spring components
-├── bookstore-ui/                     # Frontend React app
-│   └── src/
-│       ├── components/               # React components
-│       ├── pages/                    # Page components
-│       └── api.js                    # API client
-└── pom.xml                           # Maven configuration
+```bash
+npm run build
 ```
 
-## Current Status
+**Output in:** bookstore-ui/dist/
 
-- [X] User authentication and authorization
-- [X] Book catalog with search
-- [X] Shopping cart functionality
-- [X] Order placement and history
-- [X] Admin panel for book management
-- [X] Bulk upload for books
-- [X] Dark mode
-- [X] Responsive UI
+Demo Credentials
 
-## Roadmap
+**Admin Account**
 
-- [ ] User profile management
-- [ ] Book reviews and ratings
-- [ ] Advanced search filters
-- [ ] Payment integration
-- [ ] Email notifications
-- [ ] Wishlists
+Username: admin
 
-## Screenshots
+Password: admin123
 
-![Catalog](./screenshots/catalog.png)
-![Cart](./screenshots/cart.png)
-![Admin Panel](./screenshots/admin.png)
+Capabilities: Full inventory management, bulk operations
 
-## 📄 License
+**Customer Account**
+Option 1: Register at /register
 
-MIT License
+Option 2: Use any test account you create
 
-## 👨‍💻 Author
+### Key Highlights
+1. **ASIN Inventory System:**
+Amazon-style 10-character identifiers (B0XXXXXXXX)
+Deterministic generation prevents duplicates
+Enables bulk operations with confidence
+2. **Deterministic ID Generation:**
+SHA-256 hash of (title + author)
+Same book = same ID across imports
+Idempotent bulk uploads
+3. **Bulk Operations:**
+Upload: CSV/JSON with drag & drop preview
+Update: Batch price/stock adjustments
+Delete: Remove multiple books at once
+Export: Filtered catalog download
+4. **Browsing History:**
+LinkedList implementation (FIFO)
+Capacity limit: 10 books
+O(1) add to front, O(1) remove from end
+5. **OpenLibrary Integration:**
+Automatic cover fetching via ISBN
+Fallback to genre-based gradient backgrounds
+Lazy loading for performance
+6. **Responsive Design:**
+CSS Grid for equal-width cards
 
-Aditya Shubham
+---
