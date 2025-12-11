@@ -1,14 +1,29 @@
 import { useState, useEffect } from 'react';
 import { 
-  Container, Typography, Box, Button, CircularProgress, Stack, Alert 
+  Container, Typography, Box, Button, CircularProgress, Stack, Alert,
+  useTheme  // 👈 Import useTheme
 } from '@mui/material';
-import { History as HistoryIcon, ShoppingCart, Visibility } from '@mui/icons-material';
+import { History as HistoryIcon } from '@mui/icons-material';
 import { api } from '../../api';
 import BookListItem from '../Books/BookListItem';
 
 export default function History({ addToCart, user }) {
+  // ============================================
+  // THEME DETECTION
+  // ============================================
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === 'dark';
+
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // ============================================
+  // THEME-AWARE COLORS
+  // ============================================
+  const colors = {
+    emptyStateBg: isDarkMode ? '#1e1e1e' : '#fafafa',
+    emptyStateBorder: isDarkMode ? 'rgba(255,255,255,0.12)' : '#e7e7e7',
+  };
   
   useEffect(() => {
     (async () => {
@@ -67,9 +82,9 @@ export default function History({ addToCart, user }) {
         <Box sx={{ 
           p: 6, 
           textAlign: 'center', 
-          border: '1px solid #e7e7e7', 
+          border: `1px solid ${colors.emptyStateBorder}`,
           borderRadius: 2,
-          backgroundColor: '#fafafa'
+          backgroundColor: colors.emptyStateBg
         }}>
           <HistoryIcon sx={{ fontSize: 80, color: 'text.secondary', mb: 2 }} />
           <Typography variant="h6" gutterBottom>

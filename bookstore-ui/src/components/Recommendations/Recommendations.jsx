@@ -1,16 +1,31 @@
 import { useState, useEffect } from 'react';
 import { 
-  Container, Typography, Box, Button, CircularProgress, Alert, Stack 
+  Container, Typography, Box, Button, CircularProgress, Alert, Stack,
+  useTheme  // 👈 Import useTheme
 } from '@mui/material';
 import { Recommend } from '@mui/icons-material';
 import { api } from '../../api';
 import BookListItem from '../Books/BookListItem';
 
 export default function Recommendations({ addToCart, user }) {
+  // ============================================
+  // THEME DETECTION
+  // ============================================
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === 'dark';
+
   const [recs, setRecs] = useState([]);
   const [err, setErr] = useState('');
   const [loading, setLoading] = useState(true);
   const [isPersonalized, setIsPersonalized] = useState(false);
+
+  // ============================================
+  // THEME-AWARE COLORS
+  // ============================================
+  const colors = {
+    emptyStateBg: isDarkMode ? '#1e1e1e' : '#fafafa',
+    emptyStateBorder: isDarkMode ? 'rgba(255,255,255,0.12)' : '#e7e7e7',
+  };
   
   useEffect(() => {
     (async () => {
@@ -86,9 +101,9 @@ export default function Recommendations({ addToCart, user }) {
         <Box sx={{ 
           p: 6, 
           textAlign: 'center', 
-          border: '1px solid #e7e7e7', 
+          border: `1px solid ${colors.emptyStateBorder}`,
           borderRadius: 2,
-          backgroundColor: '#fafafa'
+          backgroundColor: colors.emptyStateBg
         }}>
           <Recommend sx={{ fontSize: 80, color: 'text.secondary', mb: 2 }} />
           <Typography variant="h6" gutterBottom>

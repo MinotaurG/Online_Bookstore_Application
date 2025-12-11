@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { 
-  Card, CardContent, Box, Typography, Button, Chip 
+  Card, CardContent, Box, Typography, Button, Chip,
+  useTheme  // 👈 Import useTheme
 } from '@mui/material';
 import { ShoppingCart, Visibility } from '@mui/icons-material';
 import bookCoverService from '../../services/bookCoverService';
@@ -13,6 +14,12 @@ export default function BookListItem({
   user,
   subtitle
 }) {
+  // ============================================
+  // THEME DETECTION
+  // ============================================
+  const theme = useTheme();
+  const isDarkMode = theme.palette.mode === 'dark';
+
   const [imageError, setImageError] = useState(false);
   
   const stock = book.stockQuantity ?? 0;
@@ -22,25 +29,65 @@ export default function BookListItem({
   const coverUrl = bookCoverService.getBookCover(book);
   const fallbackGradient = getGenreGradient(book.genre);
 
+  // ============================================
+  // THEME-AWARE COLORS
+  // ============================================
+  // LeetCode analogy: Lookup table for O(1) access
+  const colors = {
+    // Card
+    cardBg: isDarkMode ? '#1e1e1e' : '#ffffff',
+    border: isDarkMode ? 'rgba(255,255,255,0.12)' : '#e7e7e7',
+    borderHover: isDarkMode ? 'rgba(255,255,255,0.24)' : '#c7c7c7',
+    hoverShadow: isDarkMode 
+      ? '0 4px 12px rgba(0,0,0,0.5)' 
+      : '0 4px 12px rgba(0,0,0,0.12)',
+    
+    // Image section
+    imageBg: isDarkMode ? '#2a2a2a' : '#ffffff',
+    imageBorder: isDarkMode ? 'rgba(255,255,255,0.08)' : '#e7e7e7',
+    
+    // Text
+    titleText: isDarkMode ? '#ffffff' : '#0F1111',
+    secondaryText: isDarkMode ? '#b0b0b0' : '#565959',
+    priceText: isDarkMode ? '#ff8c00' : '#B12704',
+    
+    // Chip
+    chipBorder: isDarkMode ? 'rgba(255,255,255,0.3)' : '#D5D9D9',
+    chipText: isDarkMode ? '#b0b0b0' : '#565959',
+    
+    // Buttons
+    primaryBtnBg: isDarkMode ? '#ffa41c' : '#FFD814',
+    primaryBtnHover: isDarkMode ? '#ffb84d' : '#F7CA00',
+    primaryBtnBorder: isDarkMode ? '#ff9900' : '#FCD200',
+    primaryBtnText: '#0F1111',
+    
+    secondaryBtnBorder: isDarkMode ? 'rgba(255,255,255,0.3)' : '#D5D9D9',
+    secondaryBtnText: isDarkMode ? '#ffffff' : '#0F1111',
+    secondaryBtnHover: isDarkMode ? 'rgba(255,255,255,0.08)' : '#F7FAFA',
+    
+    disabledBtnBg: isDarkMode ? 'rgba(255,255,255,0.12)' : '#F0F2F2',
+    disabledBtnText: isDarkMode ? 'rgba(255,255,255,0.5)' : '#565959',
+  };
+
   return (
     <Card sx={{
       display: 'flex',
       height: 200,
-      border: '1px solid #e7e7e7',
+      border: `1px solid ${colors.border}`,
       borderRadius: '8px',
-      backgroundColor: '#fff',
+      backgroundColor: colors.cardBg,
       transition: 'all 0.15s ease-in-out',
       '&:hover': { 
-        boxShadow: '0 4px 12px rgba(0,0,0,0.12)',
-        borderColor: '#c7c7c7'
+        boxShadow: colors.hoverShadow,
+        borderColor: colors.borderHover
       }
     }}>
-      {/* Book Cover - Amazon Style */}
+      {/* Book Cover */}
       <Box sx={{
         width: 140,
         minWidth: 140,
-        backgroundColor: '#ffffff',
-        borderRight: '1px solid #e7e7e7',
+        backgroundColor: colors.imageBg,
+        borderRight: `1px solid ${colors.imageBorder}`,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -111,6 +158,7 @@ export default function BookListItem({
         display: 'flex',
         flexDirection: 'column',
         p: 2,
+        backgroundColor: colors.cardBg,
         '&:last-child': { pb: 2 }
       }}>
         {/* Title */}
@@ -120,7 +168,7 @@ export default function BookListItem({
           sx={{
             fontSize: '1rem',
             fontWeight: 500,
-            color: '#0F1111',
+            color: colors.titleText,
             mb: 0.5,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
@@ -136,7 +184,7 @@ export default function BookListItem({
         <Typography 
           variant="body2" 
           sx={{
-            color: '#565959',
+            color: colors.secondaryText,
             fontSize: '0.875rem',
             mb: 0.5
           }}
@@ -149,7 +197,7 @@ export default function BookListItem({
           <Typography 
             variant="caption" 
             sx={{
-              color: '#565959',
+              color: colors.secondaryText,
               fontSize: '0.75rem',
               mb: 1
             }}
@@ -167,8 +215,8 @@ export default function BookListItem({
             sx={{ 
               fontSize: '0.7rem',
               height: 24,
-              borderColor: '#D5D9D9',
-              color: '#565959'
+              borderColor: colors.chipBorder,
+              color: colors.chipText
             }}
           />
         </Box>
@@ -187,7 +235,7 @@ export default function BookListItem({
             sx={{ 
               fontSize: '1.25rem',
               fontWeight: 400,
-              color: '#B12704'
+              color: colors.priceText
             }}
           >
             ₹{book.price}
@@ -203,17 +251,17 @@ export default function BookListItem({
                 disabled={isOutOfStock}
                 sx={{ 
                   textTransform: 'none',
-                  backgroundColor: '#FFD814',
-                  color: '#0F1111',
-                  border: '1px solid #FCD200',
+                  backgroundColor: colors.primaryBtnBg,
+                  color: colors.primaryBtnText,
+                  border: `1px solid ${colors.primaryBtnBorder}`,
                   boxShadow: 'none',
                   '&:hover': {
-                    backgroundColor: '#F7CA00',
+                    backgroundColor: colors.primaryBtnHover,
                     boxShadow: 'none'
                   },
                   '&:disabled': {
-                    backgroundColor: '#F0F2F2',
-                    color: '#565959'
+                    backgroundColor: colors.disabledBtnBg,
+                    color: colors.disabledBtnText
                   }
                 }}
               >
@@ -229,11 +277,11 @@ export default function BookListItem({
                 onClick={() => onView(book.id)}
                 sx={{ 
                   textTransform: 'none',
-                  borderColor: '#D5D9D9',
-                  color: '#0F1111',
+                  borderColor: colors.secondaryBtnBorder,
+                  color: colors.secondaryBtnText,
                   '&:hover': {
-                    backgroundColor: '#F7FAFA',
-                    borderColor: '#D5D9D9'
+                    backgroundColor: colors.secondaryBtnHover,
+                    borderColor: colors.secondaryBtnBorder
                   }
                 }}
               >
