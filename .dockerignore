@@ -1,0 +1,51 @@
+# Build outputs (we build inside Docker)
+target/
+*.jar
+*.class
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+
+# Git (not needed in container)
+.git/
+.gitignore
+
+# Docker files (don't copy Docker config into image)
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Frontend (separate container)
+bookstore-ui/
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Local DynamoDB files
+DynamoDBLocal.jar
+DynamoDBLocal_lib/
+shared-local-instance.db
+dynamodb-local-metadata.json
+
+# Documentation (not needed in runtime)
+docs/
+*.md
+*.pdf
+
+# Test exports
+*.csv
+*.json
+!src/**/*.json
+
+# Screenshots
+screenshots/

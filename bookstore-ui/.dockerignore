@@ -1,0 +1,35 @@
+# Dependencies (reinstalled in container)
+node_modules/
+
+# Build output (rebuilt in container)
+dist/
+
+# Git
+.git/
+.gitignore
+
+# Docker files
+Dockerfile
+.dockerignore
+
+# Documentation
+*.md
+
+# Environment files (use Docker env vars instead)
+.env.local
+.env.*.local
+
+# Debug logs
+npm-debug.log*
+
+# IDE
+.vscode/
+.idea/
+
+# Test files
+*.txt
+test-*.json
+test-*.csv
+
+# Images folder (screenshots, not needed in production)
+Images-v1/

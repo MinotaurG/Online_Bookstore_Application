@@ -1,19 +1,16 @@
 package com.bookstore;
 
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import org.springframework.stereotype.Repository;
 import software.amazon.awssdk.enhanced.dynamodb.*;
-import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
-import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.*;
 
-import java.net.URI;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Repository
 public class DynamoDbSingleItemRecommendationRepository implements RecommendationRepository {
 
     private static final String TABLE_NAME = "Recommendations";
@@ -22,17 +19,10 @@ public class DynamoDbSingleItemRecommendationRepository implements Recommendatio
     private final DynamoDbEnhancedClient enhancedClient;
     private final DynamoDbTable<UserRecommendations> table;
 
-    public DynamoDbSingleItemRecommendationRepository() {
-        this.client = DynamoDbClient.builder()
-                .endpointOverride(URI.create("http://localhost:8000")) // DynamoDB Local
-                .region(Region.US_EAST_1)
-                .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("dummy", "dummy")))
-                .build();
-
-        this.enhancedClient = DynamoDbEnhancedClient.builder()
-                .dynamoDbClient(client)
-                .build();
-
+    // Constructor injection - Spring provides these from DynamoUsersConfig
+    public DynamoDbSingleItemRecommendationRepository(DynamoDbClient client, DynamoDbEnhancedClient enhancedClient) {
+        this.client = client;
+        this.enhancedClient = enhancedClient;
         this.table = enhancedClient.table(TABLE_NAME, TableSchema.fromBean(UserRecommendations.class));
         createTableIfNotExists();
     }
@@ -73,7 +63,6 @@ public class DynamoDbSingleItemRecommendationRepository implements Recommendatio
         table.deleteItem(Key.builder().partitionValue(userId).build());
     }
 
-
     @Override
     public List<Book> findRecommendationsForUser(String userId, int limit) {
         if (userId == null || limit <= 0) return Collections.emptyList();
@@ -89,10 +78,6 @@ public class DynamoDbSingleItemRecommendationRepository implements Recommendatio
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Try to obtain a Book from a Recommendation. First try common getter getBook()/getItem(),
-     * otherwise try to build a Book from available fields (bookId/title/author).
-     */
     private Book bookFromRecommendation(Recommendation r) {
         if (r == null) return null;
 
@@ -120,11 +105,9 @@ public class DynamoDbSingleItemRecommendationRepository implements Recommendatio
         String author = tryInvokeStringGetter(r, "getAuthor", "getWriter");
 
         if (id == null && title == null && author == null) {
-            // nothing useful found
             return null;
         }
 
-        // build a minimal Book instance (assumes Book has no-arg constructor + setters)
         try {
             Book b = new Book();
             if (id != null) {
@@ -132,7 +115,6 @@ public class DynamoDbSingleItemRecommendationRepository implements Recommendatio
                     java.lang.reflect.Method setId = Book.class.getMethod("setId", String.class);
                     setId.invoke(b, id);
                 } catch (NoSuchMethodException ns) {
-                    // maybe field is named differently; ignore if setter absent
                 }
             }
             if (title != null) {
@@ -166,7 +148,6 @@ public class DynamoDbSingleItemRecommendationRepository implements Recommendatio
             } catch (Exception ignored) {
             }
         }
-        // try fields as last resort
         for (String fieldName : new String[]{"bookId", "itemId", "id", "title", "name", "author", "writer"}) {
             try {
                 java.lang.reflect.Field f = r.getClass().getDeclaredField(fieldName);
@@ -180,7 +161,6 @@ public class DynamoDbSingleItemRecommendationRepository implements Recommendatio
         }
         return null;
     }
-
 
     public void close() {
         client.close();

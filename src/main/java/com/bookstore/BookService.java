@@ -1,56 +1,38 @@
 package com.bookstore;
 
-
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import org.springframework.stereotype.Service;
 import software.amazon.awssdk.enhanced.dynamodb.*;
 import software.amazon.awssdk.enhanced.dynamodb.model.*;
-import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.*;
 import software.amazon.awssdk.services.dynamodb.model.*;
 
-
-import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-
 /**
  * BookService using DynamoDB Enhanced client (v2).
- * - Connects to local DynamoDB at http://localhost:8000
- * - Creates a table "Books" if missing, with a GSI "TitleIndex" on attribute "title"
+ * - Uses injected DynamoDB client (configured via DynamoUsersConfig)
+ * - Creates a table "Books" if missing, with GSIs for "title" and "asin"
  * - Provides CRUD and simple search utilities
  * - Includes idempotent save/update to avoid duplicate books (by title)
  */
+@Service
 public class BookService {
-
 
     private final DynamoDbClient dynamoDbClient;
     private final DynamoDbEnhancedClient enhancedClient;
     private final DynamoDbTable<Book> bookTable;
     private final String tableName = "Books";
 
-
-    public BookService() {
-        // Connect to local DynamoDB; use dummy credentials for local testing
-        this.dynamoDbClient = DynamoDbClient.builder()
-                .endpointOverride(URI.create("http://localhost:8000"))
-                .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("dummy", "dummy")))
-                .region(Region.US_EAST_1)
-                .build();
-
-
-        this.enhancedClient = DynamoDbEnhancedClient.builder()
-                .dynamoDbClient(dynamoDbClient)
-                .build();
-
-
+    // Constructor injection - Spring provides these from DynamoUsersConfig
+    public BookService(DynamoDbClient dynamoDbClient, DynamoDbEnhancedClient enhancedClient) {
+        this.dynamoDbClient = dynamoDbClient;
+        this.enhancedClient = enhancedClient;
         this.bookTable = enhancedClient.table(tableName, TableSchema.fromBean(Book.class));
         createTableIfNotExists();
     }
-
 
     private void createTableIfNotExists() {
         try {
@@ -61,7 +43,7 @@ public class BookService {
                     .attributeDefinitions(
                             AttributeDefinition.builder().attributeName("id").attributeType(ScalarAttributeType.S).build(),
                             AttributeDefinition.builder().attributeName("title").attributeType(ScalarAttributeType.S).build(),
-                            AttributeDefinition.builder().attributeName("asin").attributeType(ScalarAttributeType.S).build()  // NEW
+                            AttributeDefinition.builder().attributeName("asin").attributeType(ScalarAttributeType.S).build()
                     )
                     .keySchema(KeySchemaElement.builder().attributeName("id").keyType(KeyType.HASH).build())
                     .provisionedThroughput(ProvisionedThroughput.builder()
@@ -75,7 +57,7 @@ public class BookService {
                                     .provisionedThroughput(ProvisionedThroughput.builder()
                                             .readCapacityUnits(5L).writeCapacityUnits(5L).build())
                                     .build(),
-                            // NEW: AsinIndex
+                            // AsinIndex
                             GlobalSecondaryIndex.builder()
                                     .indexName("AsinIndex")
                                     .keySchema(KeySchemaElement.builder().attributeName("asin").keyType(KeyType.HASH).build())
@@ -93,18 +75,15 @@ public class BookService {
         }
     }
 
-
     // -------------------------------
     // CRUD OPERATIONS
     // -------------------------------
-
 
     /** Plain insert (used for tests or to insert with a known id). */
     public void saveBook(Book book) {
         book.ensureAsin();
         bookTable.putItem(book);
     }
-
 
     /**
      * Inserts or updates a book (by title) to prevent duplicates.
@@ -116,10 +95,8 @@ public class BookService {
 
         Optional<Book> existing = findOneByTitleIgnoreCase(book.getTitle());
 
-
         if (existing.isPresent()) {
             Book old = existing.get();
-            // choose what to preserve: keep old id, update price/stock/genre/author as desired
             old.setPrice(book.getPrice());
             old.setStockQuantity(book.getStockQuantity());
             old.setAuthor(book.getAuthor());
@@ -132,12 +109,10 @@ public class BookService {
         }
     }
 
-
     /** Get by ID. */
     public Book getBookById(String id) {
         return bookTable.getItem(r -> r.key(k -> k.partitionValue(id)));
     }
-
 
     /** Delete by ID. */
     public void deleteBook(String id) {
@@ -153,7 +128,6 @@ public class BookService {
         return books.size();
     }
 
-
     /** List all books (scan). */
     public List<Book> listAllBooks() {
         return StreamSupport.stream(bookTable.scan().spliterator(), false)
@@ -161,18 +135,15 @@ public class BookService {
                 .collect(Collectors.toList());
     }
 
-
     /** Query by exact title (via GSI). */
     public List<Book> findByTitle(String title) {
         DynamoDbIndex<Book> titleIndex = bookTable.index("TitleIndex");
         QueryConditional qc = QueryConditional.keyEqualTo(Key.builder().partitionValue(title).build());
 
-
         return StreamSupport.stream(titleIndex.query(r -> r.queryConditional(qc)).spliterator(), false)
                 .flatMap(page -> page.items().stream())
                 .collect(Collectors.toList());
     }
-
 
     /** Search by partial match (title or author). */
     public List<Book> searchByTitleOrAuthorContains(String text) {
@@ -184,16 +155,13 @@ public class BookService {
                 .collect(Collectors.toList());
     }
 
-
     // -------------------------------
     // UTILITIES
     // -------------------------------
 
-
     /** Find one book by title, ignoring case. */
     public Optional<Book> findOneByTitleIgnoreCase(String title) {
         if (title == null || title.isEmpty()) return Optional.empty();
-
 
         List<Book> all = listAllBooks();
         return all.stream()
@@ -205,9 +173,7 @@ public class BookService {
     // ASIN-RELATED OPERATIONS
     // -------------------------------
 
-    /**
-     * Get book by ASIN (using GSI)
-     */
+    /** Get book by ASIN (using GSI) */
     public Book getBookByAsin(String asin) {
         if (asin == null || !AsinGenerator.isValid(asin)) {
             return null;
@@ -224,10 +190,7 @@ public class BookService {
         return results.isEmpty() ? null : results.get(0);
     }
 
-    /**
-     * Migrate all existing books to have ASINs
-     * Call this once to add ASINs to books that don't have them
-     */
+    /** Migrate all existing books to have ASINs */
     public int migrateExistingBooksToAsin() {
         List<Book> allBooks = listAllBooks();
         int updated = 0;
@@ -245,9 +208,7 @@ public class BookService {
         return updated;
     }
 
-    /**
-     * Delete by ASIN (easier to remember than UUID)
-     */
+    /** Delete by ASIN */
     public boolean deleteByAsin(String asin) {
         Book book = getBookByAsin(asin);
         if (book != null) {
@@ -261,10 +222,7 @@ public class BookService {
     // BULK OPERATIONS
     // -------------------------------
 
-    /**
-     * Bulk update books
-     * Returns count of successfully updated books
-     */
+    /** Bulk update books - returns count of successfully updated books */
     public int bulkUpdateBooks(List<BulkUpdateRequest.BookUpdate> updates) {
         int updated = 0;
 
@@ -272,7 +230,6 @@ public class BookService {
             try {
                 Book book = null;
 
-                // Find book by ASIN or ID
                 if (update.getAsin() != null && !update.getAsin().isBlank()) {
                     book = getBookByAsin(update.getAsin());
                 } else if (update.getId() != null && !update.getId().isBlank()) {
@@ -285,7 +242,6 @@ public class BookService {
                     continue;
                 }
 
-                // Update only non-null fields
                 if (update.getTitle() != null) book.setTitle(update.getTitle());
                 if (update.getAuthor() != null) book.setAuthor(update.getAuthor());
                 if (update.getGenre() != null) book.setGenre(update.getGenre());
@@ -305,14 +261,10 @@ public class BookService {
         return updated;
     }
 
-    /**
-     * Bulk delete books by IDs or ASINs
-     * Returns count of successfully deleted books
-     */
+    /** Bulk delete books by IDs or ASINs - returns count deleted */
     public int bulkDeleteBooks(List<String> ids, List<String> asins) {
         int deleted = 0;
 
-        // Delete by IDs
         if (ids != null) {
             for (String id : ids) {
                 try {
@@ -325,7 +277,6 @@ public class BookService {
             }
         }
 
-        // Delete by ASINs
         if (asins != null) {
             for (String asin : asins) {
                 try {
@@ -343,9 +294,7 @@ public class BookService {
         return deleted;
     }
 
-    /**
-     * Filter books by criteria (for catalog export)
-     */
+    /** Filter books by criteria (for catalog export) */
     public List<Book> filterBooks(String genre, String author, Integer minStock, Integer maxStock) {
         List<Book> allBooks = listAllBooks();
 
@@ -358,7 +307,6 @@ public class BookService {
                 .filter(book -> maxStock == null || book.getStockQuantity() <= maxStock)
                 .collect(Collectors.toList());
     }
-
 
     /** Close client resources. */
     public void close() {

@@ -47,3 +47,14 @@ target/
 *.war
 *.ear
 *.iml
+
+# Docker
+*.log
+docker-compose.override.yml
+
+# Backup files
+*.bak
+
+# Local database
+shared-local-instance.db
+dynamodb-local-metadata.json

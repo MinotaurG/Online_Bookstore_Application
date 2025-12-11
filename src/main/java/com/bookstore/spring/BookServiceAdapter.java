@@ -19,8 +19,9 @@ public class BookServiceAdapter {
 
     private final BookService bookService;
 
-    public BookServiceAdapter() {
-        this.bookService = new BookService();
+    // GOOD - gets BookService from Spring (which uses proper endpoint)
+    public BookServiceAdapter(BookService bookService) {
+        this.bookService = bookService;
     }
 
     // reads
